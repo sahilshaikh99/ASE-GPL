@@ -1,0 +1,10 @@
+F:\ASE\ASEProject\ASEProject\bin\Debug\ASEProject.exe.config
+F:\ASE\ASEProject\ASEProject\bin\Debug\ASEProject.exe
+F:\ASE\ASEProject\ASEProject\bin\Debug\ASEProject.pdb
+F:\ASE\ASEProject\ASEProject\obj\Debug\ASEProject.csproj.AssemblyReference.cache
+F:\ASE\ASEProject\ASEProject\obj\Debug\ASEProject.Properties.Resources.resources
+F:\ASE\ASEProject\ASEProject\obj\Debug\ASEProject.csproj.GenerateResource.cache
+F:\ASE\ASEProject\ASEProject\obj\Debug\ASEProject.csproj.CoreCompileInputs.cache
+F:\ASE\ASEProject\ASEProject\obj\Debug\ASEProject.exe
+F:\ASE\ASEProject\ASEProject\obj\Debug\ASEProject.pdb
+F:\ASE\ASEProject\ASEProject\obj\Debug\ASEProject.Form1.resources

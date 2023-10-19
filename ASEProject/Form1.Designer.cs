@@ -68,7 +68,7 @@
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.Size = new System.Drawing.Size(363, 315);
             this.richTextBox1.TabIndex = 2;
-            this.richTextBox1.Text = "Enter Programm";
+            this.richTextBox1.Text = "";
             // 
             // textBox1
             // 
@@ -76,7 +76,7 @@
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(362, 20);
             this.textBox1.TabIndex = 3;
-            this.textBox1.Text = "Enter Command";
+            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // button3
             // 
@@ -111,7 +111,7 @@
             // 
             this.pictureBox1.Location = new System.Drawing.Point(395, 30);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(446, 315);
+            this.pictureBox1.Size = new System.Drawing.Size(435, 315);
             this.pictureBox1.TabIndex = 7;
             this.pictureBox1.TabStop = false;
             // 

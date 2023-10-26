@@ -7,16 +7,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace ASEProject
 {
     public partial class Form1 : Form
     {
+  
         public Form1()
         {
             InitializeComponent();
         }
-
         private void toolStripTextBox1_Click(object sender, EventArgs e)
         {
 
@@ -34,17 +36,15 @@ namespace ASEProject
 
         private void button3_Click(object sender, EventArgs e)
         {
+            string userInput = commandBox.Text;
 
         }
 
-        private void button4_Click(object sender, EventArgs e)
+        private void clearBtn_Click(object sender, EventArgs e)
         {
-
-        }
-
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-
+  
         }
     }
+
+
 }

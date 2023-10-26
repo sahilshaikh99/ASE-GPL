@@ -28,109 +28,109 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.button3 = new System.Windows.Forms.Button();
-            this.button4 = new System.Windows.Forms.Button();
-            this.button5 = new System.Windows.Forms.Button();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.saveBtn = new System.Windows.Forms.Button();
+            this.openBtn = new System.Windows.Forms.Button();
+            this.programWindow = new System.Windows.Forms.RichTextBox();
+            this.commandBox = new System.Windows.Forms.TextBox();
+            this.runBtn = new System.Windows.Forms.Button();
+            this.syntexBtn = new System.Windows.Forms.Button();
+            this.clearBtn = new System.Windows.Forms.Button();
+            this.canvas = new System.Windows.Forms.PictureBox();
+            ((System.ComponentModel.ISupportInitialize)(this.canvas)).BeginInit();
             this.SuspendLayout();
             // 
-            // button1
+            // saveBtn
             // 
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.Location = new System.Drawing.Point(3, 1);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Save";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.saveBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.saveBtn.Location = new System.Drawing.Point(3, 1);
+            this.saveBtn.Name = "saveBtn";
+            this.saveBtn.Size = new System.Drawing.Size(75, 23);
+            this.saveBtn.TabIndex = 0;
+            this.saveBtn.Text = "Save";
+            this.saveBtn.UseVisualStyleBackColor = true;
+            this.saveBtn.Click += new System.EventHandler(this.button1_Click);
             // 
-            // button2
+            // openBtn
             // 
-            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button2.Location = new System.Drawing.Point(85, 1);
-            this.button2.Name = "button2";
-            this.button2.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 1;
-            this.button2.Text = "Open";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.openBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.openBtn.Location = new System.Drawing.Point(85, 1);
+            this.openBtn.Name = "openBtn";
+            this.openBtn.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.openBtn.Size = new System.Drawing.Size(75, 23);
+            this.openBtn.TabIndex = 1;
+            this.openBtn.Text = "Open";
+            this.openBtn.UseVisualStyleBackColor = true;
+            this.openBtn.Click += new System.EventHandler(this.button2_Click);
             // 
-            // richTextBox1
+            // programWindow
             // 
-            this.richTextBox1.Location = new System.Drawing.Point(12, 30);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(363, 315);
-            this.richTextBox1.TabIndex = 2;
-            this.richTextBox1.Text = "";
+            this.programWindow.Location = new System.Drawing.Point(12, 30);
+            this.programWindow.Name = "programWindow";
+            this.programWindow.Size = new System.Drawing.Size(363, 315);
+            this.programWindow.TabIndex = 2;
+            this.programWindow.Text = "";
             // 
-            // textBox1
+            // commandBox
             // 
-            this.textBox1.Location = new System.Drawing.Point(13, 364);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(362, 20);
-            this.textBox1.TabIndex = 3;
-            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            this.commandBox.Location = new System.Drawing.Point(13, 364);
+            this.commandBox.Name = "commandBox";
+            this.commandBox.Size = new System.Drawing.Size(362, 20);
+            this.commandBox.TabIndex = 3;
             // 
-            // button3
+            // runBtn
             // 
-            this.button3.Location = new System.Drawing.Point(51, 390);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(75, 23);
-            this.button3.TabIndex = 4;
-            this.button3.Text = "Run";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.runBtn.Location = new System.Drawing.Point(51, 390);
+            this.runBtn.Name = "runBtn";
+            this.runBtn.Size = new System.Drawing.Size(75, 23);
+            this.runBtn.TabIndex = 4;
+            this.runBtn.Text = "Run";
+            this.runBtn.UseVisualStyleBackColor = true;
+            this.runBtn.Click += new System.EventHandler(this.button3_Click);
             // 
-            // button4
+            // syntexBtn
             // 
-            this.button4.Location = new System.Drawing.Point(153, 390);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(75, 23);
-            this.button4.TabIndex = 5;
-            this.button4.Text = "Syntex";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
+            this.syntexBtn.Location = new System.Drawing.Point(153, 390);
+            this.syntexBtn.Name = "syntexBtn";
+            this.syntexBtn.Size = new System.Drawing.Size(75, 23);
+            this.syntexBtn.TabIndex = 5;
+            this.syntexBtn.Text = "Syntex";
+            this.syntexBtn.UseVisualStyleBackColor = true;
             // 
-            // button5
+            // clearBtn
             // 
-            this.button5.Location = new System.Drawing.Point(259, 390);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(75, 23);
-            this.button5.TabIndex = 6;
-            this.button5.Text = "Clear";
-            this.button5.UseVisualStyleBackColor = true;
+            this.clearBtn.Location = new System.Drawing.Point(259, 390);
+            this.clearBtn.Name = "clearBtn";
+            this.clearBtn.Size = new System.Drawing.Size(75, 23);
+            this.clearBtn.TabIndex = 6;
+            this.clearBtn.Text = "Clear";
+            this.clearBtn.UseVisualStyleBackColor = true;
+            this.clearBtn.Click += new System.EventHandler(this.clearBtn_Click);
             // 
-            // pictureBox1
+            // canvas
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(395, 30);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(435, 315);
-            this.pictureBox1.TabIndex = 7;
-            this.pictureBox1.TabStop = false;
+            this.canvas.BackColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.canvas.Location = new System.Drawing.Point(395, 30);
+            this.canvas.Name = "canvas";
+            this.canvas.Size = new System.Drawing.Size(435, 315);
+            this.canvas.TabIndex = 7;
+            this.canvas.TabStop = false;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(842, 438);
-            this.Controls.Add(this.pictureBox1);
-            this.Controls.Add(this.button5);
-            this.Controls.Add(this.button4);
-            this.Controls.Add(this.button3);
-            this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.richTextBox1);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.canvas);
+            this.Controls.Add(this.clearBtn);
+            this.Controls.Add(this.syntexBtn);
+            this.Controls.Add(this.runBtn);
+            this.Controls.Add(this.commandBox);
+            this.Controls.Add(this.programWindow);
+            this.Controls.Add(this.openBtn);
+            this.Controls.Add(this.saveBtn);
             this.Name = "Form1";
             this.Text = "GPL";
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.canvas)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -138,14 +138,14 @@
 
         #endregion
 
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.RichTextBox richTextBox1;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.Button button5;
-        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Button saveBtn;
+        private System.Windows.Forms.Button openBtn;
+        private System.Windows.Forms.RichTextBox programWindow;
+        private System.Windows.Forms.TextBox commandBox;
+        private System.Windows.Forms.Button runBtn;
+        private System.Windows.Forms.Button syntexBtn;
+        private System.Windows.Forms.Button clearBtn;
+        private System.Windows.Forms.PictureBox canvas;
     }
 }
 

@@ -69,6 +69,7 @@
             this.programWindow.Size = new System.Drawing.Size(363, 315);
             this.programWindow.TabIndex = 2;
             this.programWindow.Text = "";
+            this.programWindow.TextChanged += new System.EventHandler(this.programWindow_TextChanged);
             // 
             // commandBox
             // 

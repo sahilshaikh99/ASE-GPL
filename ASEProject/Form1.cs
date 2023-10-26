@@ -38,11 +38,19 @@ namespace ASEProject
         {
             string userInput = commandBox.Text;
 
+            var (shapeName, x, y) = new CommandParser().ParseCommand(userInput, canvas.Width, canvas.Height);
+            MessageBox.Show(shapeName);
+ 
         }
 
         private void clearBtn_Click(object sender, EventArgs e)
         {
   
+        }
+
+        private void programWindow_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 

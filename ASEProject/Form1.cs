@@ -68,7 +68,9 @@ namespace ASEProject
 
         private void clearBtn_Click(object sender, EventArgs e)
         {
-  
+            canvasShape.Image = null;
+
+            commandBox.Text = string.Empty;
         }
 
         private void programWindow_TextChanged(object sender, EventArgs e)

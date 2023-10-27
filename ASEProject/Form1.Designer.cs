@@ -35,8 +35,8 @@
             this.runBtn = new System.Windows.Forms.Button();
             this.syntexBtn = new System.Windows.Forms.Button();
             this.clearBtn = new System.Windows.Forms.Button();
-            this.canvas = new System.Windows.Forms.PictureBox();
-            ((System.ComponentModel.ISupportInitialize)(this.canvas)).BeginInit();
+            this.canvasShape = new System.Windows.Forms.PictureBox();
+            ((System.ComponentModel.ISupportInitialize)(this.canvasShape)).BeginInit();
             this.SuspendLayout();
             // 
             // saveBtn
@@ -107,21 +107,21 @@
             this.clearBtn.UseVisualStyleBackColor = true;
             this.clearBtn.Click += new System.EventHandler(this.clearBtn_Click);
             // 
-            // canvas
+            // canvasShape
             // 
-            this.canvas.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.canvas.Location = new System.Drawing.Point(395, 30);
-            this.canvas.Name = "canvas";
-            this.canvas.Size = new System.Drawing.Size(435, 315);
-            this.canvas.TabIndex = 7;
-            this.canvas.TabStop = false;
+            this.canvasShape.BackColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.canvasShape.Location = new System.Drawing.Point(395, 30);
+            this.canvasShape.Name = "canvasShape";
+            this.canvasShape.Size = new System.Drawing.Size(435, 315);
+            this.canvasShape.TabIndex = 7;
+            this.canvasShape.TabStop = false;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(842, 438);
-            this.Controls.Add(this.canvas);
+            this.Controls.Add(this.canvasShape);
             this.Controls.Add(this.clearBtn);
             this.Controls.Add(this.syntexBtn);
             this.Controls.Add(this.runBtn);
@@ -131,7 +131,7 @@
             this.Controls.Add(this.saveBtn);
             this.Name = "Form1";
             this.Text = "GPL";
-            ((System.ComponentModel.ISupportInitialize)(this.canvas)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.canvasShape)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -146,7 +146,7 @@
         private System.Windows.Forms.Button runBtn;
         private System.Windows.Forms.Button syntexBtn;
         private System.Windows.Forms.Button clearBtn;
-        private System.Windows.Forms.PictureBox canvas;
+        private System.Windows.Forms.PictureBox canvasShape;
     }
 }
 

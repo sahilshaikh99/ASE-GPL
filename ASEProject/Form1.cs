@@ -14,10 +14,12 @@ namespace ASEProject
 {
     public partial class Form1 : Form
     {
-  
+        private Bitmap canvasBitmap;
+
         public Form1()
         {
             InitializeComponent();
+            canvasBitmap = new Bitmap(canvasShape.Width, canvasShape.Height);
         }
         private void toolStripTextBox1_Click(object sender, EventArgs e)
         {
@@ -38,9 +40,23 @@ namespace ASEProject
         {
             string userInput = commandBox.Text;
 
-            var (shapeName, x, y) = new CommandParser().ParseCommand(userInput, canvas.Width, canvas.Height);
-            MessageBox.Show(shapeName);
- 
+
+            using (Graphics graphics = Graphics.FromImage(canvasBitmap))
+            {
+                var (shapeName, x, y) = new CommandParser().ParseCommand(userInput, canvasShape.Width, canvasShape.Height);
+                Shape shape = new CreateShape().MakeShape(shapeName);
+
+                if (shape != null)
+                {        
+                    shape.Draw(graphics, x, y);
+                }
+
+                else
+                {
+                    MessageBox.Show("Unknown shape.");
+                }
+
+            }
         }
 
         private void clearBtn_Click(object sender, EventArgs e)

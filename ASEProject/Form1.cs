@@ -44,16 +44,23 @@ namespace ASEProject
             using (Graphics graphics = Graphics.FromImage(canvasBitmap))
             {
                 var (shapeName, x, y) = new CommandParser().ParseCommand(userInput, canvasShape.Width, canvasShape.Height);
-                Shape shape = new CreateShape().MakeShape(shapeName);
+                if (shapeName != null)
+                {
+                    Shape shape = new CreateShape().MakeShape(shapeName);
 
-                if (shape != null)
-                {        
-                    shape.Draw(graphics, x, y);
+                    if (shape != null)
+                    {
+                        shape.Draw(graphics, x, y);
+                    }
+
+                    else
+                    {
+                        MessageBox.Show("Unknown shape.");
+                    }
                 }
-
                 else
                 {
-                    MessageBox.Show("Unknown shape.");
+                    MessageBox.Show("Invalid command or coordinates are out of bounds.");
                 }
 
             }

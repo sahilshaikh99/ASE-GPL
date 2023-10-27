@@ -13,6 +13,18 @@ namespace ASEProject
             string[] parts = command.Split(' ');
             string shapeName = parts[0].ToLower();
 
+            if (shapeName == "moveto")
+            {
+                if (int.TryParse(parts[1], out int x) && int.TryParse(parts[2], out int y))
+                {
+                    if (x >= 0 && x < canvasWidth && y >= 0 && y < canvasHeight)
+                    {
+                        return (shapeName, x, y, 0, 0, 0);
+                    }
+                }
+                return (null, 0, 0, 0, 0, 0);
+            }
+
             int width = 0;
             int height = 0;
             int radius = 0;

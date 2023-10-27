@@ -15,6 +15,8 @@ namespace ASEProject
     public partial class Form1 : Form
     {
         private Bitmap canvasBitmap;
+        private int cursorPosX = 0;
+        private int cursorPosY = 0;
 
         public Form1()
         {
@@ -46,16 +48,25 @@ namespace ASEProject
                 var (shapeName, x, y, width, height, radius) = new CommandParser().ParseCommand(userInput, canvasShape.Width, canvasShape.Height);
                 if (shapeName != null)
                 {
-                    Shape shape = new CreateShape().MakeShape(shapeName);
-
-                    if (shape != null)
+                    if (shapeName == "moveto")
                     {
-                        shape.Draw(graphics, x, y, width, height, radius);
+                        cursorPosX = x;
+                        cursorPosY = y;
                     }
-
                     else
                     {
-                        MessageBox.Show("Unknown shape.");
+
+                        Shape shape = new CreateShape().MakeShape(shapeName);
+
+                        if (shape != null)
+                        {
+                            shape.Draw(graphics, cursorPosX, cursorPosY, width, height, radius);
+                        }
+
+                        else
+                        {
+                            MessageBox.Show("Unknown shape.");
+                        }
                     }
                 }
                 else

@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace ASEProject
 {
-    public class Shape
+    public abstract class Shape
     {
-        public virtual void Draw(Graphics graphics, int x, int y) { }
+        public abstract void Draw(Graphics graphics, int x, int y, int width, int height, int radius);
     }
 
 }

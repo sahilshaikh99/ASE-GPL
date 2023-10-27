@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace ASEProject
 {
-    internal class Rectangle: Shape
+    public class Rectangle: Shape
     {
-        public override void Draw(Graphics graphics, int x, int y)
+        public override void Draw(Graphics graphics, int x, int y, int width, int height, int radius)
         {
             using (Brush brush = new SolidBrush(Color.Red))
             {

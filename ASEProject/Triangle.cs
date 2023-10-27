@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace ASEProject
 {
-    internal class Triangle: Shape
+    public class Triangle: Shape
     {
-        public override void Draw(Graphics graphics, int x, int y)
+        public override void Draw(Graphics graphics, int x, int y, int width, int height, int radius)
         {
             Point[] points = { new Point(x, y), new Point(x + 100, y), new Point(x + 50, y + 100) };
             using (Brush brush = new SolidBrush(Color.Red))

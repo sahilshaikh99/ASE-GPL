@@ -43,14 +43,14 @@ namespace ASEProject
 
             using (Graphics graphics = Graphics.FromImage(canvasBitmap))
             {
-                var (shapeName, x, y) = new CommandParser().ParseCommand(userInput, canvasShape.Width, canvasShape.Height);
+                var (shapeName, x, y, width, height, radius) = new CommandParser().ParseCommand(userInput, canvasShape.Width, canvasShape.Height);
                 if (shapeName != null)
                 {
                     Shape shape = new CreateShape().MakeShape(shapeName);
 
                     if (shape != null)
                     {
-                        shape.Draw(graphics, x, y);
+                        shape.Draw(graphics, x, y, width, height, radius);
                     }
 
                     else
@@ -64,6 +64,7 @@ namespace ASEProject
                 }
 
             }
+            canvasShape.Image = (Image)canvasBitmap.Clone();
         }
 
         private void clearBtn_Click(object sender, EventArgs e)

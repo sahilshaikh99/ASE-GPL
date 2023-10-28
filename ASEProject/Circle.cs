@@ -13,8 +13,9 @@ namespace ASEProject
         {
             using (Brush brush = new SolidBrush(Color.Blue))
             {
-                graphics.FillEllipse(brush, x, y, 100, 100);
+                graphics.FillEllipse(brush, x - radius, y - radius, 2 * radius, 2 * radius);
             }
+
         }
     }
 }

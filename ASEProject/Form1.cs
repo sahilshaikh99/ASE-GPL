@@ -80,9 +80,13 @@ namespace ASEProject
 
         private void clearBtn_Click(object sender, EventArgs e)
         {
-            canvasShape.Image = null;
+ 
+            canvasBitmap = new Bitmap(canvasShape.Width, canvasShape.Height);
+
+            canvasShape.Image = canvasBitmap;
 
             commandBox.Text = string.Empty;
+            programWindow.Text = string.Empty;
         }
 
         private void programWindow_TextChanged(object sender, EventArgs e)

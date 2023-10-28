@@ -14,7 +14,7 @@ namespace ASEProject
         {
             using (Brush brush = new SolidBrush(Color.Red))
             {
-                graphics.FillRectangle(brush, x, y, 150, 100);
+                graphics.FillRectangle(brush, x - width, y - height, width, height);
             }
         }
     }

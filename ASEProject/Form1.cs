@@ -17,6 +17,7 @@ namespace ASEProject
         private Bitmap canvasBitmap;
         private int cursorPosX = 0;
         private int cursorPosY = 0;
+        private Color penColor = Color.Black;
         private List<Shape> myShapes = new List<Shape>();
 
         public Form1()
@@ -46,13 +47,17 @@ namespace ASEProject
 
             using (Graphics graphics = Graphics.FromImage(canvasBitmap))
             {
-                var (shapeName, x, y, width, height, radius) = new CommandParser().ParseCommand(userInput, canvasShape.Width, canvasShape.Height);
+                var (shapeName, x, y, width, height, radius, penColorName) = new CommandParser().ParseCommand(userInput, canvasShape.Width, canvasShape.Height);
                 if (shapeName != null)
                 {
                     if (shapeName == "moveto")
                     {
                         cursorPosX = x;
                         cursorPosY = y;
+                    }
+                    else if (shapeName == "pen")
+                    {
+                        penColor = Color.FromName(penColorName); 
                     }
                     else
                     {
@@ -63,7 +68,7 @@ namespace ASEProject
                         {
                             myShapes.Add(shape);
 
-                            shape.Draw(graphics, cursorPosX, cursorPosY, width, height, radius);
+                            shape.Draw(graphics, penColor, cursorPosX, cursorPosY, width, height, radius);
                         }
 
                         else

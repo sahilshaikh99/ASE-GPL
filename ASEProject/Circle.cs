@@ -9,9 +9,9 @@ namespace ASEProject
 {
     public class Circle: Shape
     {
-        public override void Draw(Graphics graphics,int x, int y, int width, int height, int radius)
+        public override void Draw(Graphics graphics, Color pencolor,int x, int y, int width, int height, int radius)
         {
-            using (Brush brush = new SolidBrush(Color.Blue))
+            using (Brush brush = new SolidBrush(pencolor))
             {
                 graphics.FillEllipse(brush, x - radius, y - radius, 2 * radius, 2 * radius);
             }

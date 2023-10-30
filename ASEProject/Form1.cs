@@ -17,6 +17,7 @@ namespace ASEProject
         private Bitmap canvasBitmap;
         private int cursorPosX = 0;
         private int cursorPosY = 0;
+        private List<Shape> myShapes = new List<Shape>();
 
         public Form1()
         {
@@ -60,6 +61,8 @@ namespace ASEProject
 
                         if (shape != null)
                         {
+                            myShapes.Add(shape);
+
                             shape.Draw(graphics, cursorPosX, cursorPosY, width, height, radius);
                         }
 

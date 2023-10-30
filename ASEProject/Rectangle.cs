@@ -10,11 +10,22 @@ namespace ASEProject
 {
     public class Rectangle: Shape
     {
-        public override void Draw(Graphics graphics, Color pencolor, int x, int y, int width, int height, int radius)
+        public override void Draw(Graphics graphics, Color penColor, int x, int y, int width, int height, int radius, bool fill)
         {
-            using (Brush brush = new SolidBrush(pencolor))
+            if (fill)
             {
-                graphics.FillRectangle(brush, x - width, y - height, width, height);
+                using (Brush brush = new SolidBrush(penColor))
+                {
+                    graphics.FillRectangle(brush, x - width, y - height, width, height);
+                }
+            }
+            else
+            {
+                using (Pen pen = new Pen(penColor))
+                {
+                    graphics.DrawRectangle(pen, x - width, y - height, width, height);
+                }
+
             }
         }
     }

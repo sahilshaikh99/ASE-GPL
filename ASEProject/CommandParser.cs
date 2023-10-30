@@ -8,7 +8,7 @@ namespace ASEProject
 {
     public class CommandParser
     {
-        public (string ShapeName, int X, int Y, int Width, int Height, int Radius, String penColorName) ParseCommand(string command, int canvasWidth, int canvasHeight)
+        public (string ShapeName, int X, int Y, int Width, int Height, int Radius, String penColorName, bool Fill) ParseCommand(string command, int canvasWidth, int canvasHeight)
         {
             string[] parts = command.Split(' ');
             string shapeName = parts[0].ToLower();
@@ -19,15 +19,30 @@ namespace ASEProject
                 {
                     if (x >= 0 && x < canvasWidth && y >= 0 && y < canvasHeight)
                     {
-                        return (shapeName, x, y, 0, 0, 0, null);
+                        return (shapeName, x, y, 0, 0, 0, null, true);
                     }
                 }
-                return (null, 0, 0, 0, 0, 0, null);
+                return (null, 0, 0, 0, 0, 0, null, true);
             }
             else if (shapeName == "pen")
             {
                 string penColorName = parts.Length > 1 ? parts[1] : null;
-                return (shapeName, 0, 0, 0, 0, 0, penColorName);
+                return (shapeName, 0, 0, 0, 0, 0, penColorName, true);
+            }
+            else if (shapeName == "fill")
+            {
+                if (parts.Length > 1)
+                {
+                    string fillOption = parts[1].ToLower();
+                    if (fillOption == "on")
+                    {
+                        return (shapeName, 0, 0, 0, 0, 0, null, true);
+                    }
+                    else if (fillOption == "off")
+                    {
+                        return (shapeName, 0, 0, 0, 0, 0, null, false);
+                    }
+                }
             }
 
             int width = 0;
@@ -52,7 +67,7 @@ namespace ASEProject
             }
 
 
-            return (shapeName, 0, 0, width, height, radius, null);
+            return (shapeName, 0, 0, width, height, radius, null, true);
         }
     }
 

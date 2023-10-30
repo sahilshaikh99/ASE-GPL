@@ -18,6 +18,7 @@ namespace ASEProject
         private int cursorPosX = 0;
         private int cursorPosY = 0;
         private Color penColor = Color.Black;
+        private bool fillShapes = true; 
         private List<Shape> myShapes = new List<Shape>();
 
         public Form1()
@@ -47,7 +48,7 @@ namespace ASEProject
 
             using (Graphics graphics = Graphics.FromImage(canvasBitmap))
             {
-                var (shapeName, x, y, width, height, radius, penColorName) = new CommandParser().ParseCommand(userInput, canvasShape.Width, canvasShape.Height);
+                var (shapeName, x, y, width, height, radius, penColorName, fill) = new CommandParser().ParseCommand(userInput, canvasShape.Width, canvasShape.Height);
                 if (shapeName != null)
                 {
                     if (shapeName == "moveto")
@@ -59,6 +60,10 @@ namespace ASEProject
                     {
                         penColor = Color.FromName(penColorName); 
                     }
+                    else if (shapeName == "fill")
+                    {
+                        fillShapes = fill;
+                    }
                     else
                     {
 
@@ -68,7 +73,7 @@ namespace ASEProject
                         {
                             myShapes.Add(shape);
 
-                            shape.Draw(graphics, penColor, cursorPosX, cursorPosY, width, height, radius);
+                            shape.Draw(graphics, penColor, cursorPosX, cursorPosY, width, height, radius, fillShapes);
                         }
 
                         else

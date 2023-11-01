@@ -33,7 +33,29 @@ namespace ASEProject
 
         private void button1_Click(object sender, EventArgs e)
         {
+            using (SaveFileDialog saveFileDialogBox = new SaveFileDialog())
+            {
+                saveFileDialogBox.Filter = "Custom Files (*.gpl)|*.gpl|All Files (*.*)|*.*";
+                saveFileDialogBox.FilterIndex = 1;
+                saveFileDialogBox.Title = "Save Commands File";
+                saveFileDialogBox.DefaultExt = ".gpl";
 
+                if (saveFileDialogBox.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        string filePath = saveFileDialogBox.FileName;
+                        string commandsToSave = programWindow.Text;
+
+                        System.IO.File.WriteAllText(filePath, commandsToSave);
+                        MessageBox.Show("Commands saved successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error while saving commands: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
         }
 
         private void button2_Click(object sender, EventArgs e)

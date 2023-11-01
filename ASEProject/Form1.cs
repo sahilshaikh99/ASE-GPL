@@ -91,6 +91,10 @@ namespace ASEProject
                         cursorPosX = 0;
                         cursorPosY = 0;
                     }
+                    else if (shapeName == "clear")
+                    {
+                        ClearMyCanvas();
+                    }
                     else
                     {
 
@@ -127,6 +131,12 @@ namespace ASEProject
 
             commandBox.Text = string.Empty;
             programWindow.Text = string.Empty;
+        }
+
+        private void ClearMyCanvas()
+        {
+            myShapes.Clear();
+            canvasShape.Image = null;
         }
 
         private void programWindow_TextChanged(object sender, EventArgs e)

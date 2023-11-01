@@ -64,6 +64,11 @@ namespace ASEProject
                     {
                         fillShapes = fill;
                     }
+                    else if (shapeName == "reset")
+                    {
+                        cursorPosX = 0;
+                        cursorPosY = 0;
+                    }
                     else
                     {
 

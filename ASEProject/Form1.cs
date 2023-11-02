@@ -100,6 +100,8 @@ namespace ASEProject
             }
             if (inputCommands != null && inputCommands.Length > 0)
             {
+                makeCanvasBlank();
+
                 string[] commands = inputCommands.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries);
 
                 using (Graphics graphics = Graphics.FromImage(canvasBitmap))
@@ -117,9 +119,7 @@ namespace ASEProject
         private void clearBtn_Click(object sender, EventArgs e)
         {
 
-            canvasBitmap = new Bitmap(canvasShape.Width, canvasShape.Height);
-
-            canvasShape.Image = canvasBitmap;
+            makeCanvasBlank();
 
             commandBox.Text = string.Empty;
             programWindow.Text = string.Empty;
@@ -189,10 +189,7 @@ namespace ASEProject
         private void ClearMyCanvas()
         {
             myShapes.Clear();
-
-            canvasBitmap = new Bitmap(canvasShape.Width, canvasShape.Height);
-
-            canvasShape.Image = canvasBitmap;
+            makeCanvasBlank();
         }
 
         private void programWindow_TextChanged(object sender, EventArgs e)
@@ -200,6 +197,12 @@ namespace ASEProject
 
         }
 
+        private void makeCanvasBlank()
+        {
+            canvasBitmap = new Bitmap(canvasShape.Width, canvasShape.Height);
+
+            canvasShape.Image = canvasBitmap;
+        }
     }
 
 }

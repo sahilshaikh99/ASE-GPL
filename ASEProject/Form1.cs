@@ -18,7 +18,7 @@ namespace ASEProject
         private int cursorPosX = 0;
         private int cursorPosY = 0;
         private Color penColor = Color.Black;
-        private bool fillShapes = true; 
+        private bool fillShapes = false;
         private List<Shape> myShapes = new List<Shape>();
 
         public Form1()
@@ -60,71 +60,63 @@ namespace ASEProject
 
         private void button2_Click(object sender, EventArgs e)
         {
+            using (OpenFileDialog openFileDialogBox = new OpenFileDialog())
+            {
+                openFileDialogBox.Filter = "Custom Files (*.gpl)|*.gpl|All Files (*.*)|*.*";
+                openFileDialogBox.FilterIndex = 1;
+                openFileDialogBox.Title = "Open Commands File";
 
+                if (openFileDialogBox.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        string filePath = openFileDialogBox.FileName;
+                        string fileContent = System.IO.File.ReadAllText(filePath);
+                        programWindow.Text = fileContent;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error while opening file: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
             string userInput = commandBox.Text;
+            string inputCommands = programWindow.Text;
 
 
-            using (Graphics graphics = Graphics.FromImage(canvasBitmap))
+            if (userInput != null && userInput.Length > 0)
             {
-                var (shapeName, x, y, width, height, radius, penColorName, fill) = new CommandParser().ParseCommand(userInput, canvasShape.Width, canvasShape.Height);
-                if (shapeName != null)
+                using (Graphics graphics = Graphics.FromImage(canvasBitmap))
                 {
-                    if (shapeName == "moveto")
-                    {
-                        cursorPosX = x;
-                        cursorPosY = y;
-                    }
-                    else if (shapeName == "pen")
-                    {
-                        penColor = Color.FromName(penColorName); 
-                    }
-                    else if (shapeName == "fill")
-                    {
-                        fillShapes = fill;
-                    }
-                    else if (shapeName == "reset")
-                    {
-                        cursorPosX = 0;
-                        cursorPosY = 0;
-                    }
-                    else if (shapeName == "clear")
-                    {
-                        ClearMyCanvas();
-                    }
-                    else
-                    {
+                    executeCommand(userInput, graphics);
+                    canvasShape.Image = (Image)canvasBitmap.Clone();
 
-                        Shape shape = new CreateShape().MakeShape(shapeName);
-
-                        if (shape != null)
-                        {
-                            myShapes.Add(shape);
-
-                            shape.Draw(graphics, penColor, cursorPosX, cursorPosY, width, height, radius, fillShapes);
-                        }
-
-                        else
-                        {
-                            MessageBox.Show("Unknown shape.");
-                        }
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("Invalid command or coordinates are out of bounds.");
                 }
 
             }
-            canvasShape.Image = (Image)canvasBitmap.Clone();
+            if (inputCommands != null && inputCommands.Length > 0)
+            {
+                string[] commands = inputCommands.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+                using (Graphics graphics = Graphics.FromImage(canvasBitmap))
+                {
+                    foreach (string command in commands)
+                    {
+                        executeCommand(command, graphics);
+                        canvasShape.Image = (Image)canvasBitmap.Clone();
+                    }
+                }
+            }
+
         }
 
         private void clearBtn_Click(object sender, EventArgs e)
         {
- 
+
             canvasBitmap = new Bitmap(canvasShape.Width, canvasShape.Height);
 
             canvasShape.Image = canvasBitmap;
@@ -133,17 +125,81 @@ namespace ASEProject
             programWindow.Text = string.Empty;
         }
 
+
+
+        private void executeCommand(string userInput, Graphics graphics)
+        {
+            try
+                    {
+                        var (shapeName, x, y, width, height, radius, penColorName, fill) = new CommandParser().ParseCommand(userInput, canvasShape.Width, canvasShape.Height);
+                        if (shapeName != null)
+                        {
+                            if (shapeName == "moveto")
+                            {
+                                cursorPosX = x;
+                                cursorPosY = y;
+                            }
+                            else if (shapeName == "pen")
+                            {
+                                penColor = Color.FromName(penColorName);
+                            }
+                            else if (shapeName == "fill")
+                            {
+                                fillShapes = fill;
+                            }
+                            else if (shapeName == "reset")
+                            {
+                                cursorPosX = 0;
+                                cursorPosY = 0;
+                            }
+                            else if (shapeName == "clear")
+                            {
+                                ClearMyCanvas();
+                            }
+                            else
+                            {
+
+                                Shape shape = new CreateShape().MakeShape(shapeName);
+
+                                if (shape != null)
+                                {
+                                    myShapes.Add(shape);
+
+                                    shape.Draw(graphics, penColor, cursorPosX, cursorPosY, width, height, radius, fillShapes);
+                                }
+
+                                else
+                                {
+                                    MessageBox.Show("Unknown shape.");
+                                }
+                            }
+                        }
+                        else
+                        {
+                            throw new ArgumentException("Invalid command or coordinates are out of bounds.");
+                        }
+                    }
+                    catch (ArgumentException ex)
+                    {
+
+                        MessageBox.Show("Error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+        }
+
         private void ClearMyCanvas()
         {
             myShapes.Clear();
-            canvasShape.Image = null;
+
+            canvasBitmap = new Bitmap(canvasShape.Width, canvasShape.Height);
+
+            canvasShape.Image = canvasBitmap;
         }
 
         private void programWindow_TextChanged(object sender, EventArgs e)
         {
 
         }
-    }
 
+    }
 
 }

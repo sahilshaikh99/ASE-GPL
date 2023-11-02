@@ -13,8 +13,18 @@ namespace ASEProject
             string[] parts = command.Split(' ');
             string shapeName = parts[0].ToLower();
 
+            if (parts.Length < 1)
+            {
+                throw new ArgumentException("Please enter command.");
+            }
+
             if (shapeName == "moveto")
             {
+                if (parts.Length < 3)
+                {
+                    throw new ArgumentException("Invalid 'moveto' command: Requires X and Y coordinates.");
+                }
+
                 if (int.TryParse(parts[1], out int x) && int.TryParse(parts[2], out int y))
                 {
                     if (x >= 0 && x < canvasWidth && y >= 0 && y < canvasHeight)
@@ -22,7 +32,9 @@ namespace ASEProject
                         return (shapeName, x, y, 0, 0, 0, null, true);
                     }
                 }
-                return (null, 0, 0, 0, 0, 0, null, true);
+                throw new ArgumentException("Invalid command or coordinates are out of bounds.");
+
+                //return (null, 0, 0, 0, 0, 0, null, true);
             }
             else if (shapeName == "pen")
             {

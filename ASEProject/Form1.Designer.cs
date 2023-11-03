@@ -36,6 +36,7 @@
             this.syntexBtn = new System.Windows.Forms.Button();
             this.clearBtn = new System.Windows.Forms.Button();
             this.canvasShape = new System.Windows.Forms.PictureBox();
+            this.penColorSelectorButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.canvasShape)).BeginInit();
             this.SuspendLayout();
             // 
@@ -73,14 +74,14 @@
             // 
             // commandBox
             // 
-            this.commandBox.Location = new System.Drawing.Point(13, 364);
+            this.commandBox.Location = new System.Drawing.Point(13, 377);
             this.commandBox.Name = "commandBox";
             this.commandBox.Size = new System.Drawing.Size(362, 20);
             this.commandBox.TabIndex = 3;
             // 
             // runBtn
             // 
-            this.runBtn.Location = new System.Drawing.Point(51, 390);
+            this.runBtn.Location = new System.Drawing.Point(37, 403);
             this.runBtn.Name = "runBtn";
             this.runBtn.Size = new System.Drawing.Size(75, 23);
             this.runBtn.TabIndex = 4;
@@ -90,7 +91,7 @@
             // 
             // syntexBtn
             // 
-            this.syntexBtn.Location = new System.Drawing.Point(153, 390);
+            this.syntexBtn.Location = new System.Drawing.Point(144, 403);
             this.syntexBtn.Name = "syntexBtn";
             this.syntexBtn.Size = new System.Drawing.Size(75, 23);
             this.syntexBtn.TabIndex = 5;
@@ -99,11 +100,13 @@
             // 
             // clearBtn
             // 
-            this.clearBtn.Location = new System.Drawing.Point(259, 390);
+            this.clearBtn.Location = new System.Drawing.Point(244, 403);
             this.clearBtn.Name = "clearBtn";
+            this.clearBtn.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.clearBtn.Size = new System.Drawing.Size(75, 23);
             this.clearBtn.TabIndex = 6;
             this.clearBtn.Text = "Clear";
+            this.clearBtn.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.clearBtn.UseVisualStyleBackColor = true;
             this.clearBtn.Click += new System.EventHandler(this.clearBtn_Click);
             // 
@@ -116,11 +119,22 @@
             this.canvasShape.TabIndex = 7;
             this.canvasShape.TabStop = false;
             // 
+            // penColorSelectorButton
+            // 
+            this.penColorSelectorButton.Location = new System.Drawing.Point(13, 348);
+            this.penColorSelectorButton.Name = "penColorSelectorButton";
+            this.penColorSelectorButton.Size = new System.Drawing.Size(75, 23);
+            this.penColorSelectorButton.TabIndex = 8;
+            this.penColorSelectorButton.Text = "Pen Color";
+            this.penColorSelectorButton.UseVisualStyleBackColor = true;
+            this.penColorSelectorButton.Click += new System.EventHandler(this.button1_Click_1);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(842, 438);
+            this.Controls.Add(this.penColorSelectorButton);
             this.Controls.Add(this.canvasShape);
             this.Controls.Add(this.clearBtn);
             this.Controls.Add(this.syntexBtn);
@@ -147,6 +161,7 @@
         private System.Windows.Forms.Button syntexBtn;
         private System.Windows.Forms.Button clearBtn;
         private System.Windows.Forms.PictureBox canvasShape;
+        private System.Windows.Forms.Button penColorSelectorButton;
     }
 }
 

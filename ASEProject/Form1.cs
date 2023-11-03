@@ -203,6 +203,17 @@ namespace ASEProject
 
             canvasShape.Image = canvasBitmap;
         }
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            using (ColorDialog colorDialog = new ColorDialog())
+            {
+                if (colorDialog.ShowDialog() == DialogResult.OK)
+                {
+                    penColor = colorDialog.Color;
+                }
+            }
+        }
     }
 
 }

@@ -210,9 +210,15 @@ namespace ASEProject
             {
                 if (colorDialog.ShowDialog() == DialogResult.OK)
                 {
+
                     penColor = colorDialog.Color;
                 }
             }
+        }
+
+        private void canvasShape_Click(object sender, EventArgs e)
+        {
+
         }
     }
 

@@ -37,6 +37,7 @@
             this.clearBtn = new System.Windows.Forms.Button();
             this.canvasShape = new System.Windows.Forms.PictureBox();
             this.penColorSelectorButton = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.canvasShape)).BeginInit();
             this.SuspendLayout();
             // 
@@ -118,6 +119,7 @@
             this.canvasShape.Size = new System.Drawing.Size(435, 315);
             this.canvasShape.TabIndex = 7;
             this.canvasShape.TabStop = false;
+            this.canvasShape.Click += new System.EventHandler(this.canvasShape_Click);
             // 
             // penColorSelectorButton
             // 
@@ -129,11 +131,21 @@
             this.penColorSelectorButton.UseVisualStyleBackColor = true;
             this.penColorSelectorButton.Click += new System.EventHandler(this.button1_Click_1);
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(103, 348);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 9;
+            this.button1.Text = "Fill";
+            this.button1.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(842, 438);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.penColorSelectorButton);
             this.Controls.Add(this.canvasShape);
             this.Controls.Add(this.clearBtn);
@@ -162,6 +174,7 @@
         private System.Windows.Forms.Button clearBtn;
         private System.Windows.Forms.PictureBox canvasShape;
         private System.Windows.Forms.Button penColorSelectorButton;
+        private System.Windows.Forms.Button button1;
     }
 }
 

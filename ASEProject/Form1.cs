@@ -15,8 +15,6 @@ namespace ASEProject
     public partial class Form1 : Form
     {
         private Bitmap canvasBitmap;
-        private int cursorPosX = 0;
-        private int cursorPosY = 0;
         private Color penColor = Color.Black;
         private bool fillShapes = false;
         private List<Shape> myShapes = new List<Shape>();
@@ -151,8 +149,7 @@ namespace ASEProject
                             }
                             else if (shapeName == "reset")
                             {
-                                cursorPosX = 0;
-                                cursorPosY = 0;
+                                CommandHandler.ResetCursor();
                             }
                             else if (shapeName == "clear")
                             {

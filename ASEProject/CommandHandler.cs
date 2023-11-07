@@ -8,13 +8,20 @@ namespace ASEProject
 {
     public class CommandHandler
     {
-        public int CursorPosX { get; private set; }
-        public int CursorPosY { get; private set; }
+        public int CursorPosX { get; internal set; }
+        public int CursorPosY { get; internal set; }
 
         public void MoveTo(int x, int y)
         {
             CursorPosX = x;
             CursorPosY = y;
+        }
+
+        public void ResetCursor()
+        {
+            // Reset the cursor position logic here
+            CursorPosX = 0;
+            CursorPosY = 0;
         }
     }
 }

@@ -21,5 +21,18 @@ namespace ASEProjectTest
             Assert.AreEqual(expectedY, actualY);
         }
 
+        [TestMethod]
+        public void ResetCursor_ResetsCursorPositions()
+        {
+            
+            CommandHandler commandHandler = new CommandHandler();
+            commandHandler.CursorPosX = 42; 
+            commandHandler.CursorPosX = 24;
+
+            commandHandler.ResetCursor(); 
+
+            Assert.AreEqual(0, commandHandler.CursorPosX); // Ensure cursor positions are reset to 0
+            Assert.AreEqual(0, commandHandler.CursorPosY);
+        }
     }
 }

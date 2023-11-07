@@ -51,6 +51,7 @@
     <Compile Include="CommandParser.cs" />
     <Compile Include="CreateShape.cs" />
     <Compile Include="ExceptionHandler.cs" />
+    <Compile Include="FileHandler.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>

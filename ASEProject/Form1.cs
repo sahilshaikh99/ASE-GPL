@@ -20,6 +20,7 @@ namespace ASEProject
         private List<Shape> myShapes = new List<Shape>();
 
         private CommandHandler CommandHandler = new CommandHandler();
+        private FileHandler FileHandler = new FileHandler();
 
         public Form1()
         {
@@ -48,7 +49,7 @@ namespace ASEProject
                         string filePath = saveFileDialogBox.FileName;
                         string commandsToSave = programWindow.Text;
 
-                        System.IO.File.WriteAllText(filePath, commandsToSave);
+                        FileHandler.SaveDataToFile(filePath, commandsToSave);
                         MessageBox.Show("Commands saved successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                     catch (Exception ex)
@@ -72,7 +73,7 @@ namespace ASEProject
                     try
                     {
                         string filePath = openFileDialogBox.FileName;
-                        string fileContent = System.IO.File.ReadAllText(filePath);
+                        string fileContent = FileHandler.ReadFileContent(filePath);
                         programWindow.Text = fileContent;
                     }
                     catch (Exception ex)

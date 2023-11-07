@@ -1,8 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\ASEProject"
+    "\\ASEProject",
+    "\\ASEProjectTest"
   ],
-  "SelectedNode": "\\ASEProject.sln",
+  "SelectedNode": "\\ASEProjectTest\\UnitTest1.cs",
   "PreviewInSolutionExplorer": false
 }

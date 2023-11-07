@@ -21,11 +21,14 @@ namespace ASEProject
         private bool fillShapes = false;
         private List<Shape> myShapes = new List<Shape>();
 
+        private CommandHandler CommandHandler = new CommandHandler();
+
         public Form1()
         {
             InitializeComponent();
             canvasBitmap = new Bitmap(canvasShape.Width, canvasShape.Height);
         }
+
         private void toolStripTextBox1_Click(object sender, EventArgs e)
         {
 
@@ -136,8 +139,7 @@ namespace ASEProject
                         {
                             if (shapeName == "moveto")
                             {
-                                cursorPosX = x;
-                                cursorPosY = y;
+                                CommandHandler.MoveTo(x, y);
                             }
                             else if (shapeName == "pen")
                             {
@@ -165,7 +167,7 @@ namespace ASEProject
                                 {
                                     myShapes.Add(shape);
 
-                                    shape.Draw(graphics, penColor, cursorPosX, cursorPosY, width, height, radius, fillShapes);
+                                    shape.Draw(graphics, penColor, CommandHandler.CursorPosX, CommandHandler.CursorPosY, width, height, radius, fillShapes);
                                 }
 
                                 else

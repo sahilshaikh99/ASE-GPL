@@ -23,5 +23,22 @@ namespace ASEProjectTest
         }
 
 
+        [TestMethod]
+        public void ReadFileContent()
+        {
+            FileHandler fileHandler = new FileHandler();
+            string filePath = "testFile.gpl";
+            string expectedContent = "circle 50" +
+                "moveto 100 100" +
+                "circle 30" +
+                "rectangle 100 100";
+
+            // Create a test file with the expected content
+            System.IO.File.WriteAllText(filePath, expectedContent);
+
+            string actualContent = fileHandler.ReadFileContent(filePath);
+
+            Assert.AreEqual(expectedContent, actualContent);
+        }
     }
 }

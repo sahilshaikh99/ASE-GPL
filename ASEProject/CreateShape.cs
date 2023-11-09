@@ -19,6 +19,8 @@ namespace ASEProject
                     return new Rectangle();
                 case "triangle":
                     return new Triangle();
+                case "drawto":
+                    return new DrawTo();
                 default:
                     return null;
             }

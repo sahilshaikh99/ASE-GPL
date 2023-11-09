@@ -99,6 +99,15 @@ namespace ASEProject
             }
             else if (shapeName == "triangle")
             {
+                if (int.TryParse(parts[1], out width) && int.TryParse(parts[2], out height) && int.TryParse(parts[3], out radius))
+                {
+                }
+            }
+            else if (shapeName == "drawto")
+            {
+                if (int.TryParse(parts[1], out width) && int.TryParse(parts[2], out height))
+                {
+                }
             }
 
 

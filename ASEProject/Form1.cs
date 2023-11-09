@@ -14,18 +14,13 @@ namespace ASEProject
 {
     public partial class Form1 : Form
     {
-        private Bitmap canvasBitmap;
-        private Color penColor = Color.Black;
-        private bool fillShapes = false;
-        private List<Shape> myShapes = new List<Shape>();
-
-        private CommandHandler CommandHandler = new CommandHandler();
+        private DrawHandler drawHandler;
         private FileHandler FileHandler = new FileHandler();
 
         public Form1()
         {
             InitializeComponent();
-            canvasBitmap = new Bitmap(canvasShape.Width, canvasShape.Height);
+            drawHandler = new DrawHandler(canvasShape.Width, canvasShape.Height, canvasShape);
         }
 
         private void toolStripTextBox1_Click(object sender, EventArgs e)
@@ -89,119 +84,30 @@ namespace ASEProject
             string userInput = commandBox.Text;
             string inputCommands = programWindow.Text;
 
-
-            if (userInput != null && userInput.Length > 0)
+            if (!string.IsNullOrEmpty(userInput))
             {
-                using (Graphics graphics = Graphics.FromImage(canvasBitmap))
-                {
-                    executeCommand(userInput, graphics);
-                    canvasShape.Image = (Image)canvasBitmap.Clone();
-
-                }
-
-            }
-            if (inputCommands != null && inputCommands.Length > 0)
-            {
-                makeCanvasBlank();
-
-                string[] commands = inputCommands.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries);
-
-                using (Graphics graphics = Graphics.FromImage(canvasBitmap))
-                {
-                    foreach (string command in commands)
-                    {
-                        executeCommand(command, graphics);
-                        canvasShape.Image = (Image)canvasBitmap.Clone();
-                    }
-                }
+                drawHandler.ExecuteCommand(userInput);
+                canvasShape.Image = drawHandler.GetCanvasImage();
             }
 
+            if (!string.IsNullOrEmpty(inputCommands))
+            {
+                drawHandler.ExecuteMultilineCommand(inputCommands);
+                canvasShape.Image = drawHandler.GetCanvasImage();
+            }
         }
 
         private void clearBtn_Click(object sender, EventArgs e)
         {
-
-            makeCanvasBlank();
-
+            drawHandler.ClearCanvas();
             commandBox.Text = string.Empty;
             programWindow.Text = string.Empty;
         }
 
 
-
-        private void executeCommand(string userInput, Graphics graphics)
-        {
-            try
-                    {
-                        var (shapeName, x, y, width, height, radius, penColorName, fill) = new CommandParser().ParseCommand(userInput, canvasShape.Width, canvasShape.Height);
-                        if (shapeName != null)
-                        {
-                            if (shapeName == "moveto")
-                            {
-                                CommandHandler.MoveTo(x, y);
-                            }
-                            else if (shapeName == "pen")
-                            {
-                                penColor = Color.FromName(penColorName);
-                            }
-                            else if (shapeName == "fill")
-                            {
-                                fillShapes = fill;
-                            }
-                            else if (shapeName == "reset")
-                            {
-                                CommandHandler.ResetCursor();
-                            }
-                            else if (shapeName == "clear")
-                            {
-                                ClearMyCanvas();
-                            }
-                            else
-                            {
-
-                                Shape shape = new CreateShape().MakeShape(shapeName);
-
-                                if (shape != null)
-                                {
-                                    myShapes.Add(shape);
-
-                                    shape.Draw(graphics, penColor, CommandHandler.CursorPosX, CommandHandler.CursorPosY, width, height, radius, fillShapes);
-                                }
-
-                                else
-                                {
-                                    MessageBox.Show("Unknown shape.");
-                                }
-                            }
-                        }
-                        else
-                        {
-                            throw new ArgumentException("Invalid command or coordinates are out of bounds.");
-                        }
-                    }
-                    catch (ArgumentException ex)
-                    {
-
-                        MessageBox.Show("Error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-        }
-
-        private void ClearMyCanvas()
-        {
-            myShapes.Clear();
-            makeCanvasBlank();
-        }
-
         private void programWindow_TextChanged(object sender, EventArgs e)
         {
 
-        }
-
-        private void makeCanvasBlank()
-        {
-            canvasBitmap = new Bitmap(canvasShape.Width, canvasShape.Height);
-
-            canvasShape.Image = canvasBitmap;
         }
 
         private void button1_Click_1(object sender, EventArgs e)
@@ -210,8 +116,7 @@ namespace ASEProject
             {
                 if (colorDialog.ShowDialog() == DialogResult.OK)
                 {
-
-                    penColor = colorDialog.Color;
+                    drawHandler.SetPenColor(colorDialog.Color);
                 }
             }
         }

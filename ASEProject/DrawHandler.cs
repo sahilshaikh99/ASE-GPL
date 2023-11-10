@@ -74,8 +74,7 @@ namespace ASEProject
                 catch (ArgumentException ex)
                 {
                     exceptionMessage = "Error: " + ex.Message;
-                    ShowException();
-
+                   ShowException(exceptionMessage);
                 }
             }
         }
@@ -107,7 +106,7 @@ namespace ASEProject
             UpdateCanvasImage();
         }
 
-        private void ShowException()
+        public void ShowException(string occuredException)
         {
             using (Graphics graphics = Graphics.FromImage(canvasBitmap))
             {
@@ -116,7 +115,7 @@ namespace ASEProject
                 using (Font font = new Font("Arial", 12))
                 using (SolidBrush brush = new SolidBrush(Color.Red))
                 {
-                    graphics.DrawString(exceptionMessage, font, brush, 10, 10);
+                    graphics.DrawString(occuredException, font, brush, 10, 10);
                 }
             }
         }

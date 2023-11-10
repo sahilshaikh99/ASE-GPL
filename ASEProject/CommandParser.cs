@@ -15,10 +15,18 @@ namespace ASEProject
             string[] parts = command.Split(' ');
             string shapeName = parts[0].ToLower();
 
+
             if (parts.Length < 1)
             {
                 throw new ArgumentException(new ExceptionHandler().generateException(401, "", ""));
             }
+
+            // Check for valid commands
+            if (shapeName != "moveto" && shapeName != "pen" && shapeName != "fill" && shapeName != "rectangle" && shapeName != "circle" && shapeName != "triangle" && shapeName != "drawto")
+            {
+                throw new ArgumentException("Invalid command: " + shapeName);
+            }
+
 
             if (shapeName == "moveto")
             {
@@ -84,23 +92,71 @@ namespace ASEProject
             int height = 0;
             int radius = 0;
 
-            if (shapeName == "rectangle" && parts.Length == 3)
+            if (shapeName == "rectangle")
             {
-                if (int.TryParse(parts[1], out width) && int.TryParse(parts[2], out height))
+                if (parts.Length < 3)
                 {
+                    throw new ArgumentException(new ExceptionHandler().generateException(402, "rectangle", "width and height"));
+                }
 
+                if (int.TryParse(parts[1], out int rectWidth) && int.TryParse(parts[2], out int rectHeight))
+                {
+                    // Validate width and height
+                    if (rectWidth <= 0 || rectHeight <= 0)
+                    {
+                        throw new ArgumentException(new ExceptionHandler().generateException(402, "rectangle", "positive width and height values"));
+                    }
+
+                    return (shapeName, 0, 0, rectWidth, rectHeight, 0, null, true);
+                }
+                else
+                {
+                    throw new ArgumentException(new ExceptionHandler().generateException(402, "rectangle", "numeric width and height values"));
                 }
             }
-            else if (shapeName == "circle" && parts.Length == 2)
+
+            else if (shapeName == "circle")
             {
-                if (int.TryParse(parts[1], out radius))
+                if (parts.Length < 2)
                 {
+                    throw new ArgumentException(new ExceptionHandler().generateException(402, "circle", "radius"));
+                }
+
+                if (int.TryParse(parts[1], out int circleRadius))
+                {
+                    // Validate radius
+                    if (circleRadius <= 0)
+                    {
+                        throw new ArgumentException(new ExceptionHandler().generateException(402, "circle", "positive radius value"));
+                    }
+
+                    return (shapeName, 0, 0, 0, 0, circleRadius, null, true);
+                }
+                else
+                {
+                    throw new ArgumentException(new ExceptionHandler().generateException(402, "circle", "numeric radius value"));
                 }
             }
             else if (shapeName == "triangle")
             {
-                if (int.TryParse(parts[1], out width) && int.TryParse(parts[2], out height) && int.TryParse(parts[3], out radius))
+                if (parts.Length < 4)
                 {
+                    throw new ArgumentException(new ExceptionHandler().generateException(402, "triangle", "width, height, and radius"));
+                }
+
+                if (int.TryParse(parts[1], out int triangleWidth) && int.TryParse(parts[2], out int triangleHeight) && int.TryParse(parts[3], out int triangleRadius))
+                {
+                    // Validate width, height, and radius
+                    if (triangleWidth <= 0 || triangleHeight <= 0 || triangleRadius <= 0)
+                    {
+                        throw new ArgumentException(new ExceptionHandler().generateException(402, "triangle", "positive width, height, and radius values"));
+                    }
+
+                    return (shapeName, 0, 0, triangleWidth, triangleHeight, triangleRadius, null, true);
+                }
+                else
+                {
+                    throw new ArgumentException(new ExceptionHandler().generateException(402, "triangle", "numeric width, height, and radius values"));
                 }
             }
             else if (shapeName == "drawto")

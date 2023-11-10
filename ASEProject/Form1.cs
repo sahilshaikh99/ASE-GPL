@@ -16,11 +16,14 @@ namespace ASEProject
     {
         private DrawHandler drawHandler;
         private FileHandler FileHandler = new FileHandler();
+        private SyntexCheck syntexCheck;
 
         public Form1()
         {
             InitializeComponent();
             drawHandler = new DrawHandler(canvasShape.Width, canvasShape.Height, canvasShape);
+            syntexCheck = new SyntexCheck(canvasShape.Width, canvasShape.Height, canvasShape);
+
         }
 
         private void toolStripTextBox1_Click(object sender, EventArgs e)
@@ -123,6 +126,24 @@ namespace ASEProject
 
         private void canvasShape_Click(object sender, EventArgs e)
         {
+
+        }
+
+        private void syntexBtn_Click(object sender, EventArgs e)
+        {
+            string userInput = commandBox.Text;
+            string inputCommands = programWindow.Text;
+
+            if (!string.IsNullOrEmpty(userInput))
+            {
+                syntexCheck.executeSyntexCheck(userInput);
+            }
+
+            if (!string.IsNullOrEmpty(inputCommands))
+            {
+                syntexCheck.executeSyntexCheck(inputCommands);
+            }
+            canvasShape.Image = syntexCheck.GetCanvasImage();
 
         }
     }

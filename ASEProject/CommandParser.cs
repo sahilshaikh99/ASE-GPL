@@ -7,14 +7,22 @@ using System.Threading.Tasks;
 
 namespace ASEProject
 {
+    /// <summary>
+    /// This class is responsible for parsing drawing commands and extracting relevant information.
+    /// </summary>
     public class CommandParser
     {
+        /// <summary>
+        /// Parses a drawing command and extracts relevant information.
+        /// </summary>
+        /// <param name="command">The drawing command to parse.</param>
+        /// <param name="canvasWidth">The width of the canvas.</param>
+        /// <param name="canvasHeight">The height of the canvas.</param>
+        /// <returns>A data containing information about the drawing command.</returns>
         public (string ShapeName, int X, int Y, int Width, int Height, int Radius, String penColorName, bool Fill) ParseCommand(string command, int canvasWidth, int canvasHeight)
         {
-
             string[] parts = command.Split(' ');
             string shapeName = parts[0].ToLower();
-
 
             if (parts.Length < 1)
             {
@@ -22,11 +30,10 @@ namespace ASEProject
             }
 
             // Check for valid commands
-            if (shapeName != "moveto" && shapeName != "pen" && shapeName != "fill" && shapeName != "rectangle" && shapeName != "circle" && shapeName != "triangle" && shapeName != "drawto")
+            if (shapeName != "moveto" && shapeName != "pen" && shapeName != "fill" && shapeName != "rectangle" && shapeName != "circle" && shapeName != "triangle" && shapeName != "drawto" && shapeName != "clear" && shapeName != "reset")
             {
                 throw new ArgumentException("Invalid command: " + shapeName);
             }
-
 
             if (shapeName == "moveto")
             {
@@ -42,7 +49,7 @@ namespace ASEProject
                         return (shapeName, x, y, 0, 0, 0, null, true);
                     }
                 }
-                throw new ArgumentException(new ExceptionHandler().generateException(403, "moveto",""));
+                throw new ArgumentException(new ExceptionHandler().generateException(403, "moveto", ""));
 
                 //return (null, 0, 0, 0, 0, 0, null, true);
             }
@@ -64,7 +71,6 @@ namespace ASEProject
             }
             else if (shapeName == "fill")
             {
-   
                 if (parts.Length > 1)
                 {
                     string fillOption = parts[1].ToLower();
@@ -84,7 +90,6 @@ namespace ASEProject
                 else
                 {
                     throw new ArgumentException("Invalid 'fill' command: Requires 'on' or 'off'.");
-
                 }
             }
 
@@ -161,8 +166,24 @@ namespace ASEProject
             }
             else if (shapeName == "drawto")
             {
-                if (int.TryParse(parts[1], out width) && int.TryParse(parts[2], out height))
+                if (parts.Length < 3)
                 {
+                    throw new ArgumentException(new ExceptionHandler().generateException(402, "drawto", "width and height"));
+                }
+
+                if (int.TryParse(parts[1], out int drawtoWidth) && int.TryParse(parts[2], out int drawtoHeight))
+                {
+                    // Validate width and height
+                    if (drawtoWidth <= 0 || drawtoHeight <= 0)
+                    {
+                        throw new ArgumentException(new ExceptionHandler().generateException(402, "drawto", "positive width and height values"));
+                    }
+
+                    return (shapeName, 0, 0, drawtoWidth, drawtoHeight, 0, null, true);
+                }
+                else
+                {
+                    throw new ArgumentException(new ExceptionHandler().generateException(402, "drawto", "numeric width and height values"));
                 }
             }
 
@@ -170,5 +191,4 @@ namespace ASEProject
             return (shapeName, 0, 0, width, height, radius, null, true);
         }
     }
-
 }

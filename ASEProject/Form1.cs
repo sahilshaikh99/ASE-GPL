@@ -12,25 +12,27 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace ASEProject
 {
+    /// <summary>
+    /// The main form class that represents the user interface.
+    /// </summary>
     public partial class Form1 : Form
     {
-        private DrawHandler drawHandler;
-        private FileHandler FileHandler = new FileHandler();
-        private SyntexCheck syntexCheck;
+        private DrawHandler drawHandler;      // Manages drawing on the canvas
+        private FileHandler FileHandler = new FileHandler(); // Handles file operations
+        private SyntexCheck syntexCheck;      // Checks syntax and display errors on the canvas
 
+        /// <summary>
+        /// Constructor for the main form.
+        /// </summary>
         public Form1()
         {
             InitializeComponent();
+            // Initialize DrawHandler and SyntexCheck with canvas dimensions
             drawHandler = new DrawHandler(canvasShape.Width, canvasShape.Height, canvasShape);
             syntexCheck = new SyntexCheck(canvasShape.Width, canvasShape.Height, canvasShape);
-
         }
 
-        private void toolStripTextBox1_Click(object sender, EventArgs e)
-        {
-
-        }
-
+        // Event handler for Save button
         private void button1_Click(object sender, EventArgs e)
         {
             using (SaveFileDialog saveFileDialogBox = new SaveFileDialog())
@@ -47,6 +49,7 @@ namespace ASEProject
                         string filePath = saveFileDialogBox.FileName;
                         string commandsToSave = programWindow.Text;
 
+                        // Save commands to file using FileHandler
                         FileHandler.SaveDataToFile(filePath, commandsToSave);
                         MessageBox.Show("Commands saved successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
@@ -58,6 +61,7 @@ namespace ASEProject
             }
         }
 
+        // Event handler for Open button
         private void button2_Click(object sender, EventArgs e)
         {
             using (OpenFileDialog openFileDialogBox = new OpenFileDialog())
@@ -82,17 +86,20 @@ namespace ASEProject
             }
         }
 
+        // Event handler for Execute button
         private void button3_Click(object sender, EventArgs e)
         {
             string userInput = commandBox.Text;
             string inputCommands = programWindow.Text;
 
+            // Execute single command
             if (!string.IsNullOrEmpty(userInput))
             {
-                drawHandler.ExecuteCommand(userInput);
+                drawHandler.ExecuteSingleCommand(userInput);
                 canvasShape.Image = drawHandler.GetCanvasImage();
             }
 
+            // Execute multiple commands
             if (!string.IsNullOrEmpty(inputCommands))
             {
                 drawHandler.ExecuteMultilineCommand(inputCommands);
@@ -100,6 +107,7 @@ namespace ASEProject
             }
         }
 
+        // Event handler for Clear button
         private void clearBtn_Click(object sender, EventArgs e)
         {
             drawHandler.ClearCanvas();
@@ -107,12 +115,7 @@ namespace ASEProject
             programWindow.Text = string.Empty;
         }
 
-
-        private void programWindow_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
+        // Event handler for Set Pen Color button
         private void button1_Click_1(object sender, EventArgs e)
         {
             using (ColorDialog colorDialog = new ColorDialog())
@@ -124,28 +127,35 @@ namespace ASEProject
             }
         }
 
-        private void canvasShape_Click(object sender, EventArgs e)
-        {
-
-        }
-
+        // Event handler for Syntax Check button
         private void syntexBtn_Click(object sender, EventArgs e)
         {
             string userInput = commandBox.Text;
             string inputCommands = programWindow.Text;
 
+            // Execute syntax check for single command
             if (!string.IsNullOrEmpty(userInput))
             {
-                syntexCheck.executeSyntexCheck(userInput);
+                syntexCheck.ExecuteSyntaxCheck(userInput);
             }
 
+            // Execute syntax check for multiple commands
             if (!string.IsNullOrEmpty(inputCommands))
             {
-                syntexCheck.executeSyntexCheck(inputCommands);
+                syntexCheck.ExecuteSyntaxCheck(inputCommands);
             }
             canvasShape.Image = syntexCheck.GetCanvasImage();
+        }
+
+        private void canvasShape_Click(object sender, EventArgs e)
+        {
 
         }
-    }
 
+        private void programWindow_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+    }
 }

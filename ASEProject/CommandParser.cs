@@ -30,7 +30,7 @@ namespace ASEProject
             }
 
             // Check for valid commands
-            if (shapeName != "moveto" && shapeName != "pen" && shapeName != "fill" && shapeName != "rectangle" && shapeName != "circle" && shapeName != "triangle" && shapeName != "drawto" && shapeName != "clear" && shapeName != "reset")
+            if (shapeName != "moveto" && shapeName != "colour" && shapeName != "fill" && shapeName != "rectangle" && shapeName != "circle" && shapeName != "triangle" && shapeName != "drawto" && shapeName != "clear" && shapeName != "reset")
             {
                 throw new ArgumentException("Invalid command: " + shapeName);
             }
@@ -53,11 +53,11 @@ namespace ASEProject
 
                 //return (null, 0, 0, 0, 0, 0, null, true);
             }
-            else if (shapeName == "pen")
+            else if (shapeName == "colour")
             {
                 if (parts.Length < 2)
                 {
-                    throw new ArgumentException(new ExceptionHandler().generateException(402, "pen", "a color parameter"));
+                    throw new ArgumentException(new ExceptionHandler().generateException(402, "colour", "a color parameter"));
                 }
 
                 string penColorName = parts.Length > 1 ? parts[1] : null;
@@ -65,7 +65,7 @@ namespace ASEProject
                 Color penColor = Color.FromName(penColorName);
                 if (penColor.ToArgb() == 0)
                 {
-                    throw new ArgumentException(new ExceptionHandler().generateException(402, "pen", "valid color name"));
+                    throw new ArgumentException(new ExceptionHandler().generateException(402, "colour", "valid color name"));
                 }
                 return (shapeName, 0, 0, 0, 0, 0, penColorName, true);
             }

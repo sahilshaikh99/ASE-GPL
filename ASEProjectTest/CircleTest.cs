@@ -7,6 +7,9 @@ namespace ASEProjectTest
     [TestClass]
     public class CircleTest
     {
+        /// <summary>
+        /// Test case to verify that drawing a circle with valid parameters produces the expected color at the specified position.
+        /// </summary>
         [TestMethod]
         public void TestDrawCircle_ValidParameters()
         {
@@ -22,25 +25,25 @@ namespace ASEProjectTest
             circle.Draw(graphics, penColor, x, y, 0, 0, radius, fill);
 
             Color expectedColor = Color.FromArgb(255, 0, 0, 0); // Assuming black is expected
-         
             Color pixelColor = bitmap.GetPixel(x, y);
 
             Assert.AreEqual(expectedColor, pixelColor);
         }
 
+        /// <summary>
+        /// Test case to verify that attempting to draw a circle with an invalid radius throws an ArgumentException.
+        /// </summary>
         [TestMethod]
         public void TestDrawCircle_InvalidRadius_ThrowsArgumentException()
         {
+            
             CommandParser parser = new CommandParser();
-
             string inputCommand = "circle -10";
 
             Assert.ThrowsException<ArgumentException>(() =>
             {
                 var (shapeName, x, y, width, height, radius, penColorName, fill) = parser.ParseCommand(inputCommand, 858, 477);
             });
-
         }
-
     }
 }

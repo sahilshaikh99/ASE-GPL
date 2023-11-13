@@ -157,5 +157,12 @@ namespace ASEProject
 
         }
 
+        public void multilinecommandTest(string inputCommands)
+        {
+            drawHandler.ExecuteMultilineCommand(inputCommands);
+            canvasShape.Image = drawHandler.GetCanvasImage();
+        }
+ 
+
     }
 }

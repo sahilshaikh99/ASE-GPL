@@ -4,10 +4,15 @@ using ASEProject;
 
 namespace ASEProjectTest
 {
+    /// <summary>
+    /// Test class for verifying the parsing of the clear command.
+    /// </summary>
     [TestClass]
     public class ClearCommandTest
     {
-
+        /// <summary>
+        /// Test case to verify the parsing of the clear command.
+        /// </summary>
         [TestMethod]
         public void TestClearCommand()
         {
@@ -26,9 +31,6 @@ namespace ASEProjectTest
             Assert.AreEqual(0, result.Radius);
             Assert.AreEqual(null, result.penColorName);
             Assert.AreEqual(true, result.Fill);
-
         }
     }
-
 }
-

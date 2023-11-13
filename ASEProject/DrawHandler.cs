@@ -50,7 +50,7 @@ namespace ASEProject
                         {
                             commandHandler.MoveTo(x, y);
                         }
-                        else if (shapeName == "pen")
+                        else if (shapeName == "colour")
                         {
                             SetPenColor(Color.FromName(penColorName));
                         }
@@ -77,7 +77,7 @@ namespace ASEProject
                             }
                             else
                             {
-                                throw new ArgumentException("Unknown shape.");
+                                throw new ArgumentException("Unknown command.");
                             }
                         }
                     }

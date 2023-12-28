@@ -12,6 +12,22 @@ namespace ASEProject
     /// </summary>
     public class CommandParser
     {
+        private readonly VariableManager variableManager = VariableManager.Instance;
+        private readonly DrawHandler drawHandler;
+        private readonly SyntexCheck syntexCheck;
+
+        public CommandParser(DrawHandler drawHandler)
+        {
+            this.variableManager = VariableManager.Instance;
+            this.drawHandler = drawHandler;
+   
+        }
+
+        public CommandParser(SyntexCheck syntexCheck)
+        {
+            this.syntexCheck = syntexCheck;
+        }
+
         /// <summary>
         /// Parses a drawing command and extracts relevant information.
         /// </summary>

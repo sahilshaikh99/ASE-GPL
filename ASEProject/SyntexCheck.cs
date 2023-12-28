@@ -16,6 +16,8 @@ namespace ASEProject
         private Bitmap canvasBitmap;
         private PictureBox canvasShape;
         private List<string> exceptionMessages = new List<string>();
+        private readonly CommandParser commandParser;
+
 
         /// <summary>
         /// To initialize a new instance of the <see cref="SyntexCheck"/> class.
@@ -27,6 +29,7 @@ namespace ASEProject
         {
             this.canvasShape = canvasShape;
             canvasBitmap = new Bitmap(canvasWidth, canvasHeight);
+            commandParser = new CommandParser(this); 
         }
 
         /// <summary>
@@ -42,7 +45,7 @@ namespace ASEProject
             {
                 try
                 {
-                    var (shapeName, x, y, width, height, radius, penColorName, fill) = new CommandParser().ParseCommand(commands[lineNumber], canvasBitmap.Width, canvasBitmap.Height);
+                    var (shapeName, x, y, width, height, radius, penColorName, fill) = commandParser.ParseCommand(commands[lineNumber], canvasBitmap.Width, canvasBitmap.Height);
 
                     if (shapeName == null)
                     {

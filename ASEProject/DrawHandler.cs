@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace ASEProject
@@ -17,6 +18,8 @@ namespace ASEProject
         private CommandHandler commandHandler = new CommandHandler();
         private PictureBox canvasShape;
         private List<string> exceptionMessages = new List<string>();
+        private readonly VariableManager variableManager = VariableManager.Instance;
+        private readonly CommandParser commandParser;
 
         /// <summary>
         /// Initializes a new instance of the DrawHandler class.
@@ -28,6 +31,7 @@ namespace ASEProject
         {
             this.canvasShape = canvasShape;
             canvasBitmap = new Bitmap(canvasWidth, canvasHeight);
+            commandParser = new CommandParser(this); // Pass 'this' as drawHandler parameter
         }
 
         /// <summary>
@@ -42,48 +46,48 @@ namespace ASEProject
             {
                 try
                 {
-                    var (shapeName, x, y, width, height, radius, penColorName, fill) = new CommandParser().ParseCommand(command, canvasBitmap.Width, canvasBitmap.Height);
-
-                    if (shapeName != null)
+                    // Check if the command is a variable assignment
+                    if (command.Contains("="))
                     {
-                        if (shapeName == "moveto")
-                        {
-                            commandHandler.MoveTo(x, y);
-                        }
-                        else if (shapeName == "colour")
-                        {
-                            SetPenColor(Color.FromName(penColorName));
-                        }
-                        else if (shapeName == "fill")
-                        {
-                            fillShapes = fill;
-                        }
-                        else if (shapeName == "reset")
-                        {
-                            commandHandler.ResetCursor();
-                        }
-                        else if (shapeName == "clear")
-                        {
-                            ClearCanvas();
-                        }
-                        else
-                        {
-                            Shape shape = new CreateShape().MakeShape(shapeName);
-
-                            if (shape != null)
-                            {
-                                myShapes.Add(shape);
-                                shape.Draw(graphics, penColor, commandHandler.CursorPosX, commandHandler.CursorPosY, width, height, radius, fillShapes);
-                            }
-                            else
-                            {
-                                throw new ArgumentException("Unknown command.");
-                            }
-                        }
+                        HandleVariableAssignment(command);
                     }
                     else
                     {
-                        throw new ArgumentException("Invalid command or coordinates are out of bounds.");
+                        var (shapeName, x, y, width, height, radius, penColorName, fill) = commandParser.ParseCommand(command, canvasBitmap.Width, canvasBitmap.Height);
+
+                        if (shapeName != null)
+                        {
+                            if (shapeName == "moveto")
+                            {
+                                commandHandler.MoveTo(x, y);
+                            }
+                            else if (shapeName == "colour")
+                            {
+                                SetPenColor(Color.FromName(penColorName));
+                            }
+                            else if (shapeName == "fill")
+                            {
+                                fillShapes = fill;
+                            }
+                            else if (shapeName == "reset")
+                            {
+                                commandHandler.ResetCursor();
+                            }
+                            else if (shapeName == "clear")
+                            {
+                                ClearCanvas();
+                            }
+                            else
+                            {
+                                Shape shape = new CreateShape().MakeShape(shapeName);
+                                myShapes.Add(shape);
+                                shape.Draw(graphics, penColor, commandHandler.CursorPosX, commandHandler.CursorPosY, width, height, radius, fillShapes);
+                            }
+                        }
+                        else
+                        {
+                            throw new ArgumentException("Invalid command or coordinates are out of bounds.");
+                        }
                     }
                 }
                 catch (ArgumentException ex)
@@ -93,6 +97,35 @@ namespace ASEProject
             }
             ShowException();
         }
+
+
+        private void HandleVariableAssignment(string command)
+        {
+            // Split the command by '=' and remove extra spaces
+            string[] assignmentParts = command.Split('=').Select(part => part.Trim()).ToArray();
+
+            if (assignmentParts.Length == 2)
+            {
+                string variableName = assignmentParts[0];
+                int value = int.Parse(assignmentParts[1]);
+
+                // Check if the variable exists
+                if (variableManager.VariableExists(variableName))
+                {
+                    variableManager.SetVariableValue(variableName, value);
+                }
+                else
+                {
+         
+                    variableManager.SetVariableValue(variableName, value);
+                }
+            }
+            else
+            {
+                throw new ArgumentException("Invalid variable assignment command.");
+            }
+        }
+
 
         /// <summary>
         /// Executes a single drawing command.
@@ -111,6 +144,7 @@ namespace ASEProject
         /// <param name="inputCommands">The multiline drawing commands to execute.</param>
         public void ExecuteMultilineCommand(string inputCommands)
         {
+            VariableManager.Instance.ClearVariables();
             penColor = Color.Black;
             fillShapes = false;
             CleanUpCanvas();

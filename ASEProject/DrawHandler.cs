@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -98,7 +99,6 @@ namespace ASEProject
             ShowException();
         }
 
-
         private void HandleVariableAssignment(string command)
         {
             // Split the command by '=' and remove extra spaces
@@ -107,17 +107,20 @@ namespace ASEProject
             if (assignmentParts.Length == 2)
             {
                 string variableName = assignmentParts[0];
-                int value = int.Parse(assignmentParts[1]);
+                string expression = assignmentParts[1];
 
                 // Check if the variable exists
                 if (variableManager.VariableExists(variableName))
                 {
-                    variableManager.SetVariableValue(variableName, value);
+                    // Evaluate the expression and update the variable value
+                    int result = EvaluateExpression(expression);
+                    variableManager.SetVariableValue(variableName, result);
                 }
                 else
                 {
-         
-                    variableManager.SetVariableValue(variableName, value);
+                    // If the variable doesn't exist, create it
+                    int result = EvaluateExpression(expression);
+                    variableManager.SetVariableValue(variableName, result);
                 }
             }
             else
@@ -126,6 +129,40 @@ namespace ASEProject
             }
         }
 
+
+        private int EvaluateExpression(string expression)
+        {
+            Dictionary<string, int> variableValues = new Dictionary<string, int>();
+
+            foreach (var variableName in variableManager.GetVariableNames())
+            {
+                variableValues[variableName] = variableManager.GetVariableValue(variableName);
+            }
+
+            return EvaluateExpressionRecursive(expression, variableValues);
+        }
+
+        private int EvaluateExpressionRecursive(string expression, Dictionary<string, int> variableValues)
+        {
+            if (int.TryParse(expression, out int value))
+            {
+                return value;
+            }
+
+            foreach (var variableName in variableValues.Keys)
+            {
+                string variableExpression = $"{variableName}";
+
+                if (expression.Contains(variableExpression))
+                {
+                    expression = expression.Replace(variableExpression, variableValues[variableName].ToString());
+                }
+            }
+
+            DataTable table = new DataTable();
+            var result = table.Compute(expression, "");
+            return Convert.ToInt32(result);
+        }
 
         /// <summary>
         /// Executes a single drawing command.

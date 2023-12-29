@@ -22,6 +22,11 @@ namespace ASEProject
         private readonly VariableManager variableManager = VariableManager.Instance;
         private readonly CommandParser commandParser;
 
+        private bool IsInsideIfBlock = false;
+        private bool IfConditionCheck = false;
+
+        private readonly IfHandler ifCommandHandler;
+
         /// <summary>
         /// Initializes a new instance of the DrawHandler class.
         /// </summary>
@@ -32,7 +37,9 @@ namespace ASEProject
         {
             this.canvasShape = canvasShape;
             canvasBitmap = new Bitmap(canvasWidth, canvasHeight);
-            commandParser = new CommandParser(this); // Pass 'this' as drawHandler parameter
+            commandParser = new CommandParser(this);
+            ifCommandHandler = new IfHandler(variableManager);
+
         }
 
         /// <summary>
@@ -40,63 +47,108 @@ namespace ASEProject
         /// </summary>
         /// <param name="command">The drawing command to execute.</param>
         /// <param name="LineNumber">The line number of the command in a multiline input (optional).</param>
-        public void ExecuteCommand(string command, int LineNumber = 0)
+        public void ExecuteCommand(string command, int LineNumber = 0, int totalCommand = 0)
         {
+            string[] parts = command.Split(' ');
+            string commandName = parts[0].ToLower();
 
+            try
+            {
+                if (commandName == "if")
+                {
+                    IsInsideIfBlock = true;
+                    // Extract the condition from the command (excluding "if")
+                    string condition = command.Substring(2).Trim();
+
+                    // Evaluate the condition
+                    bool ifConditionRes = ifCommandHandler.ExecuteIfBlock(condition);
+
+                    // Check if the condition is true
+                    if (ifConditionRes)
+                    {
+                        IfConditionCheck = true;
+
+                    }
+                }
+                else if (commandName == "endif")
+                {
+                    // Handle endif statement by resetting IsInsideIfBlock to false
+                    IsInsideIfBlock = false;
+                    IfConditionCheck = false;
+                }
+                else
+                {
+                    if (IsInsideIfBlock == false)
+                    {
+                        HandleShapeDraw(command);
+                    }
+                    else if (IfConditionCheck == true && IsInsideIfBlock == true)
+                    {
+                        if (LineNumber == totalCommand)
+                        {
+                            throw new ArgumentException(new ExceptionHandler().generateException(402, "if", "endif command"));
+                        }
+                        HandleShapeDraw(command);
+
+                    }           
+                }
+            }
+            catch (ArgumentException ex)
+            {
+                exceptionMessages.Add($"Error at line {LineNumber + 1}: {ex.Message}");
+            }
+        }
+
+        private void HandleShapeDraw(string command)
+        {
             using (Graphics graphics = Graphics.FromImage(canvasBitmap))
             {
-                try
+                // Check if the command is a variable assignment
+                if (command.Contains("="))
                 {
-                    // Check if the command is a variable assignment
-                    if (command.Contains("="))
-                    {
-                        HandleVariableAssignment(command);
-                    }
-                    else
-                    {
-                        var (shapeName, x, y, width, height, radius, penColorName, fill) = commandParser.ParseCommand(command, canvasBitmap.Width, canvasBitmap.Height);
+                    HandleVariableAssignment(command);
+                }
+                else
+                {
+                    var (shapeName, x, y, width, height, radius, penColorName, fill) = commandParser.ParseCommand(command, canvasBitmap.Width, canvasBitmap.Height);
 
-                        if (shapeName != null)
+                    if (shapeName != null)
+                    {
+                        if (shapeName == "moveto")
                         {
-                            if (shapeName == "moveto")
-                            {
-                                commandHandler.MoveTo(x, y);
-                            }
-                            else if (shapeName == "colour")
-                            {
-                                SetPenColor(Color.FromName(penColorName));
-                            }
-                            else if (shapeName == "fill")
-                            {
-                                fillShapes = fill;
-                            }
-                            else if (shapeName == "reset")
-                            {
-                                commandHandler.ResetCursor();
-                            }
-                            else if (shapeName == "clear")
-                            {
-                                ClearCanvas();
-                            }
-                            else
-                            {
-                                Shape shape = new CreateShape().MakeShape(shapeName);
-                                myShapes.Add(shape);
-                                shape.Draw(graphics, penColor, commandHandler.CursorPosX, commandHandler.CursorPosY, width, height, radius, fillShapes);
-                            }
+                            commandHandler.MoveTo(x, y);
+                        }
+                        else if (shapeName == "colour")
+                        {
+                            SetPenColor(Color.FromName(penColorName));
+                        }
+                        else if (shapeName == "fill")
+                        {
+                            fillShapes = fill;
+                        }
+                        else if (shapeName == "reset")
+                        {
+                            commandHandler.ResetCursor();
+                        }
+                        else if (shapeName == "clear")
+                        {
+                            ClearCanvas();
                         }
                         else
                         {
-                            throw new ArgumentException("Invalid command or coordinates are out of bounds.");
+                            Shape shape = new CreateShape().MakeShape(shapeName);
+                            myShapes.Add(shape);
+                            shape.Draw(graphics, penColor, commandHandler.CursorPosX, commandHandler.CursorPosY, width, height, radius, fillShapes);
                         }
                     }
+                    else
+                    {
+                        throw new ArgumentException("Invalid command or coordinates are out of bounds.");
+                    }
                 }
-                catch (ArgumentException ex)
-                {
-                    exceptionMessages.Add($"Error at line {LineNumber + 1} :" + ex.Message);
-                }
+                ShowException();
+
             }
-            ShowException();
         }
 
         private void HandleVariableAssignment(string command)
@@ -189,12 +241,25 @@ namespace ASEProject
 
             using (Graphics graphics = Graphics.FromImage(canvasBitmap))
             {
-                for (int lineNumber = 0; lineNumber < commands.Length; lineNumber++)
+                int totalCommand = commands.Length;
+                int lineNumber = 0;
+                while (lineNumber < totalCommand)
                 {
-                    ExecuteCommand(commands[lineNumber], lineNumber);
+                    string command = commands[lineNumber];
+
+                    // Execute the command for each line
+                    ExecuteCommand(command, lineNumber, totalCommand - 1);
+
+                    lineNumber++;
                 }
+
+                if (canvasShape != null)
+                {
+                    canvasShape.Image = (Image)canvasBitmap.Clone();
+                }
+
+                ShowException();
             }
-            ShowException();
         }
 
         /// <summary>

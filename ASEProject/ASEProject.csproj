@@ -68,6 +68,7 @@
     <Compile Include="SyntexCheck.cs" />
     <Compile Include="Triangle.cs" />
     <Compile Include="VariableManager.cs" />
+    <Compile Include="WhileHandler.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

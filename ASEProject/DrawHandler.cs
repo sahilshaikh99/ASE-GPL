@@ -24,8 +24,13 @@ namespace ASEProject
 
         private bool IsInsideIfBlock = false;
         private bool IfConditionCheck = false;
+        private bool IsInsideWhileBlock = false;
+        private bool WhileConditionCheck = false;
 
         private readonly IfHandler ifCommandHandler;
+        private readonly WhileHandler whileCommandHandler;
+        private string whileCondition = "";
+        List<string> myCommandList = new List<string>();
 
         /// <summary>
         /// Initializes a new instance of the DrawHandler class.
@@ -39,6 +44,7 @@ namespace ASEProject
             canvasBitmap = new Bitmap(canvasWidth, canvasHeight);
             commandParser = new CommandParser(this);
             ifCommandHandler = new IfHandler(variableManager);
+            whileCommandHandler = new WhileHandler(variableManager);
 
         }
 
@@ -76,9 +82,25 @@ namespace ASEProject
                     IsInsideIfBlock = false;
                     IfConditionCheck = false;
                 }
+                else if (commandName == "while")
+                {
+                    IsInsideWhileBlock = true;
+
+                    string condition = command.Substring(5).Trim();
+                    whileCondition = condition;
+
+                    // Handle while statement using WhileHandler
+                    bool whileConditionRes = whileCommandHandler.HandleWhileLoop(condition);
+
+                    // Check if the condition is true
+                    if (whileConditionRes)
+                    {
+                        WhileConditionCheck = true;
+                    }
+                }
                 else
                 {
-                    if (IsInsideIfBlock == false)
+                    if (IsInsideIfBlock == false && IsInsideWhileBlock == false)
                     {
                         HandleShapeDraw(command);
                     }
@@ -90,7 +112,36 @@ namespace ASEProject
                         }
                         HandleShapeDraw(command);
 
-                    }           
+                    }
+                    else if (WhileConditionCheck == true && IsInsideWhileBlock == true)
+                    {
+                        Console.WriteLine("in");
+                        if (command.StartsWith("endloop"))
+                        {
+                            while (whileCommandHandler.HandleWhileLoop(whileCondition) == true)
+                            {
+                                Console.WriteLine("inside");
+                                foreach (string value in myCommandList)
+                                {
+                                    Console.WriteLine(value);
+                                    HandleShapeDraw(value);
+                                }
+                            }
+
+                            IsInsideWhileBlock = false;
+                            WhileConditionCheck = false;
+                            whileCondition = "";
+                        }
+                        else
+                        {
+                            if (LineNumber == totalCommand)
+                            {
+                                throw new ArgumentException(new ExceptionHandler().generateException(402, "while", "endloop command"));
+                            }
+                            myCommandList.Add(command);
+
+                        }
+                    }
                 }
             }
             catch (ArgumentException ex)

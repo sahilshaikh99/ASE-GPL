@@ -28,6 +28,9 @@ namespace ASEProject
                     return "Invalid " + exceptionType + " command: Requires " + exceptionMessage + ". ";
                 case 403:
                     return "Invalid " + exceptionType + " command: X and Y Coordinates are out of bounds.";
+                case 404:
+                    return "" + exceptionType + " " + exceptionMessage + ".";
+
                 default:
                     return "Oops something went wrong!";
             }

@@ -26,11 +26,14 @@ namespace ASEProject
         private bool IfConditionCheck = false;
         private bool IsInsideWhileBlock = false;
         private bool WhileConditionCheck = false;
+        private bool IsInsideMethodBlock = false;
 
         private readonly IfHandler ifCommandHandler;
         private readonly WhileHandler whileCommandHandler;
+        private MethodHandler methodHandler;
         private string whileCondition = "";
         List<string> myCommandList = new List<string>();
+        List<string> methodCommandList = new List<string>();
 
         /// <summary>
         /// Initializes a new instance of the DrawHandler class.
@@ -45,7 +48,7 @@ namespace ASEProject
             commandParser = new CommandParser(this);
             ifCommandHandler = new IfHandler(variableManager);
             whileCommandHandler = new WhileHandler(variableManager);
-
+            methodHandler = new MethodHandler(this, variableManager, exceptionMessages);  // Pass exceptionMessages
         }
 
         /// <summary>
@@ -98,9 +101,20 @@ namespace ASEProject
                         WhileConditionCheck = true;
                     }
                 }
+                else if (IsMethodDefinition(command))
+                {
+                    IsInsideMethodBlock = true;
+
+                    methodCommandList.Add(command);
+
+                }
+                else if (IsMethodCall(command))
+                {
+                    methodHandler.CallMethod(command);
+                }
                 else
                 {
-                    if (IsInsideIfBlock == false && IsInsideWhileBlock == false)
+                    if (IsInsideIfBlock == false && IsInsideWhileBlock == false && IsInsideMethodBlock == false)
                     {
                         HandleShapeDraw(command);
                     }
@@ -140,6 +154,23 @@ namespace ASEProject
                             }
                             myCommandList.Add(command);
 
+                        }
+                    }
+                    else if (IsInsideMethodBlock == true)
+                    {
+                        if (command.StartsWith("endmethod"))
+                        {
+                            IsInsideMethodBlock = false;
+
+                            methodHandler.DefineMethod(methodCommandList);
+                        }
+                        else
+                        {
+                            if (LineNumber == totalCommand)
+                            {
+                                throw new ArgumentException(new ExceptionHandler().generateException(402, "method", "endmethod command"));
+                            }
+                            methodCommandList.Add(command);
                         }
                     }
                 }
@@ -265,6 +296,16 @@ namespace ASEProject
             DataTable table = new DataTable();
             var result = table.Compute(expression, "");
             return Convert.ToInt32(result);
+        }
+
+        private bool IsMethodCall(string command)
+        {
+            return command.Contains("(") && command.Contains(")");
+        }
+
+        private bool IsMethodDefinition(string command)
+        {
+            return command.StartsWith("method");
         }
 
         /// <summary>

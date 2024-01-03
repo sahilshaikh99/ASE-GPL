@@ -38,7 +38,7 @@ namespace ASEProject
         public (string ShapeName, int X, int Y, int Width, int Height, int Radius, String penColorName, bool Fill) ParseCommand(string command, int canvasWidth, int canvasHeight)
         {
             string[] parts = command.Split(' ');
-            string shapeName = parts[0].ToLower();
+            string shapeName = parts[0].ToLower().Trim();
 
             if (parts.Length < 1)
             {

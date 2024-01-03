@@ -30,16 +30,37 @@ namespace ASEProject
                 return;
             }
 
-            // Extract method signature
-            string[] parts = methodDefinition[0].Split(' ');
-            string methodName = parts[1];
-            string parameterList = parts[2].Trim('(', ')');
-
-            // Extract method body
-            string methodBody = string.Join("\n", methodDefinition.Skip(1)).Trim();
-            Console.WriteLine($"{methodName} {parameterList} {methodBody}");
-            userDefinedMethods[methodName] = $"{parameterList} => {methodBody}";
+            var match = Regex.Match(methodDefinition[0], @"method\s+(\w+)\s*\(([^)]*)\)");
+            if (match.Success)
+            {
+                string methodName = match.Groups[1].Value;
+                string parameterList = match.Groups[2].Value.Trim(); // Trim to remove leading/trailing spaces
+                Console.WriteLine($"Method Name: {methodName}");
+                Console.WriteLine($"Parameter List: {parameterList}");
+                // Extract method body
+                string methodBody = string.Join("\n", methodDefinition.Skip(1)).Trim();
+                Console.WriteLine($"{methodName} {parameterList} {methodBody}");
+                userDefinedMethods[methodName] = $"{parameterList} => {methodBody}";
+            }
+            else
+            {
+                var methodNameMatch = Regex.Match(methodDefinition[0], @"method\s+(\w+)");
+                if (methodNameMatch.Success)
+                {
+                    string methodName = methodNameMatch.Groups[1].Value;
+                    // Extract method body
+                    string methodBody = string.Join("\n", methodDefinition.Skip(1)).Trim();
+                    Console.WriteLine($"{methodName} {methodBody}");
+                    userDefinedMethods[methodName] = $" => {methodBody}";
+                }
+                else
+                {
+                    exceptionMessages.Add("Error: Invalid method signature.");
+                    return;
+                }
+            }
         }
+
 
         public void CallMethod(string methodCall)
         {
@@ -67,27 +88,17 @@ namespace ASEProject
         {
             Console.WriteLine(methodName + " " + argumentList);
 
+            Console.WriteLine(methodDefinition);
             // Parse parameters and method body
-            string[] parameters = argumentList.Split(',');
+            string[] parameters = argumentList.Split(',').Select(p => p.Trim()).ToArray();
+            string[] definitionArg = methodDefinition.Split(new[] { "=>" }, StringSplitOptions.None);
+            string[] finalArg = definitionArg[0].Split(',');
+            Console.WriteLine(string.Join(", ", finalArg));
 
-            // Map parameters to their values
-            Dictionary<string, int> parameterValues = new Dictionary<string, int>();
-            for (int i = 0; i < parameters.Length; i++)
+            if (finalArg.Length != parameters.Length)
             {
-                string parameter = parameters[i].Trim();
-                if (variableManager.VariableExists(parameter))
-                {
-                    parameterValues[parameter] = variableManager.GetVariableValue(parameter);
-                }
-                else if (int.TryParse(parameter, out int constantValue))
-                {
-                    parameterValues[parameter] = constantValue;
-                }
-                else
-                {
-                    exceptionMessages.Add($"Error: Parameter '{parameter}' not found or not a valid constant.");
-                    return;
-                }
+                exceptionMessages.Add($"Error: Number of parameters in the method call does not match the method definition for '{methodName}'.");
+                return;
             }
 
             // Extract method body
@@ -99,22 +110,48 @@ namespace ASEProject
             }
 
             string methodBody = methodDefinition.Substring(arrowIndex + 2).Trim();
+            // Map parameters to their values
+            Dictionary<string, int> parameterValues = new Dictionary<string, int>();
 
-            // Replace method parameters with values
-            foreach (var parameter in parameterValues.Keys)
+
+            if (argumentList != "")
             {
-                // Ensure to replace only whole words, not substrings
-                methodBody = Regex.Replace(methodBody, $@"\b{parameter}\b", parameterValues[parameter].ToString());
+                for (int i = 0; i < parameters.Length; i++)
+                {
+                    Console.WriteLine(parameters[i]);
+                    string originalParameter = finalArg[i].Trim();
+                    string trimmedParameter = parameters[i].Trim();
+                    Console.WriteLine(originalParameter);
+                    if (variableManager.VariableExists(trimmedParameter))
+                    {
+                        parameterValues[originalParameter] = variableManager.GetVariableValue(trimmedParameter);
+                    }
+                    else if (int.TryParse(trimmedParameter, out int constantValue))
+                    {
+                        parameterValues[originalParameter] = constantValue;
+                    }
+                    else
+                    {
+                        exceptionMessages.Add($"Error: Parameter '{trimmedParameter}' not found or not a valid constant.");
+                        return;
+                    }
+                    // Replace method parameters with values
+                    foreach (var parameter in parameterValues)
+                    {
+                        // Use Regex.Escape to handle special characters in the parameter
+                        methodBody = Regex.Replace(methodBody, $@"\b{Regex.Escape(parameter.Key)}\b", parameter.Value.ToString());
+                    }
+                }
             }
 
             // Execute the method body as a set of commands
             string[] methodCommands = methodBody.Split('\n');
             foreach (string methodCommand in methodCommands)
             {
-                drawHandler.ExecuteCommand(methodCommand);
+                drawHandler.ExecuteCommand(methodCommand.Trim());
             }
         }
 
-
     }
+
 }

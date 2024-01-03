@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace ASEProject
 {
@@ -32,20 +27,29 @@ namespace ASEProject
                 throw new ArgumentException(new ExceptionHandler().generateException(402, "if", "valid condition"));
             }
 
-            string variableName = parts[0].Trim();
-            string comparisonValueString = parts[1].Trim();
+            string leftVariableName = parts[0].Trim();
+            string rightValueString = parts[1].Trim();
 
-            if (!int.TryParse(comparisonValueString, out int comparisonValue))
+            // Check if the right side is a variable
+            if (int.TryParse(rightValueString, out int comparisonValue))
             {
-                throw new ArgumentException(new ExceptionHandler().generateException(402, "if", "numeric value"));
+                // Right side is a numeric value
+                int leftVariableValue = variableManager.GetVariableValue(leftVariableName);
+
+                return condition.Contains("<") ? leftVariableValue < comparisonValue :
+                       condition.Contains(">") ? leftVariableValue > comparisonValue :
+                                                  leftVariableValue == comparisonValue;
             }
+            else
+            {
+                // Right side is a variable
+                int leftVariableValue = variableManager.GetVariableValue(leftVariableName);
+                int rightVariableValue = variableManager.GetVariableValue(rightValueString);
 
-            int variableValue = variableManager.GetVariableValue(variableName);
-
-            return condition.Contains("<") ? variableValue < comparisonValue :
-                   condition.Contains(">") ? variableValue > comparisonValue :
-                                              variableValue == comparisonValue;
+                return condition.Contains("<") ? leftVariableValue < rightVariableValue :
+                       condition.Contains(">") ? leftVariableValue > rightVariableValue :
+                                                  leftVariableValue == rightVariableValue;
+            }
         }
-
     }
 }

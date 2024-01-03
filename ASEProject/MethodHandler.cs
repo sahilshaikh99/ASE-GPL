@@ -37,6 +37,7 @@ namespace ASEProject
 
             // Extract method body
             string methodBody = string.Join("\n", methodDefinition.Skip(1)).Trim();
+            Console.WriteLine($"{methodName} {parameterList} {methodBody}");
             userDefinedMethods[methodName] = $"{parameterList} => {methodBody}";
         }
 

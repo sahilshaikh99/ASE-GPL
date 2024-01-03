@@ -13,6 +13,8 @@ namespace ASEProject
     /// </summary>
     public class DrawTo : Shape
     {
+        private float rotationAngle;
+
         /// <summary>
         /// Draws a line from one point to another on the canvas.
         /// </summary>
@@ -29,5 +31,6 @@ namespace ASEProject
             // Draw a line from the starting point (x, y) to the ending point (width, height)
             graphics.DrawLine(new Pen(penColor), x, y, width, height);
         }
+
     }
 }

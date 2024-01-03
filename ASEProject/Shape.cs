@@ -21,5 +21,6 @@ namespace ASEProject
         /// <param name="radius">Radius of the shape if applicable (e.g., for circles).</param>
         /// <param name="fill">Determines whether to draw shapes filled or outlined.</param>
         public abstract void Draw(Graphics graphics, Color pencolor, int x, int y, int width, int height, int radius, bool fill);
+
     }
 }

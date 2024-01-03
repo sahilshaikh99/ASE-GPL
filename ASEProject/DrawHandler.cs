@@ -242,24 +242,25 @@ namespace ASEProject
             {
                 string variableName = assignmentParts[0];
                 string expression = assignmentParts[1];
-
-                // Check if the variable exists
-                if (variableManager.VariableExists(variableName))
-                {
-                    // Evaluate the expression and update the variable value
-                    int result = EvaluateExpression(expression);
-                    variableManager.SetVariableValue(variableName, result);
+                    // Check if the variable exists
+                    if (variableManager.VariableExists(variableName))
+                    {
+                        // Evaluate the expression and update the variable value
+                        int result = EvaluateExpression(expression);
+                        variableManager.SetVariableValue(variableName, result);
+                    }
+                    else
+                    {
+                        // If the variable doesn't exist, create it
+                        int result = EvaluateExpression(expression);
+                        variableManager.SetVariableValue(variableName, result);
+                    }
                 }
-                else
-                {
-                    // If the variable doesn't exist, create it
-                    int result = EvaluateExpression(expression);
-                    variableManager.SetVariableValue(variableName, result);
-                }
-            }
+               
+//                    throw new ArgumentException(new ExceptionHandler().generateException(402, "variable", "numeric value."));
             else
             {
-                throw new ArgumentException("Invalid variable assignment command.");
+                throw new ArgumentException(new ExceptionHandler().generateException(402, "variable", "valid variable assignment command."));
             }
         }
 
@@ -325,9 +326,7 @@ namespace ASEProject
         /// <param name="inputCommands">The multiline drawing commands to execute.</param>
         public void ExecuteMultilineCommand(string inputCommands)
         {
-            VariableManager.Instance.ClearVariables();
-            penColor = Color.Black;
-            fillShapes = false;
+            ResetVariables();
             CleanUpCanvas();
             string[] commands = inputCommands.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries);
 
@@ -352,6 +351,27 @@ namespace ASEProject
 
                 ShowException();
             }
+        }
+
+
+        /// <summary>
+        /// Resets all variables in the DrawHandler.
+        /// </summary>
+        public void ResetVariables()
+        {
+            penColor = Color.Black;
+            fillShapes = false;
+            myShapes.Clear();
+            exceptionMessages.Clear();
+            VariableManager.Instance.ClearVariables();
+            commandHandler.ResetCursor();
+            IsInsideIfBlock = false;
+            IfConditionCheck = false;
+            IsInsideWhileBlock = false;
+            WhileConditionCheck = false;
+            IsInsideMethodBlock = false;
+            myCommandList.Clear();
+            methodCommandList.Clear();
         }
 
         /// <summary>

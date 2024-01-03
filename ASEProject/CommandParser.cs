@@ -46,29 +46,32 @@ namespace ASEProject
             }
 
             // Check for valid commands
-            if (shapeName != "moveto" && shapeName != "colour" && shapeName != "fill" && shapeName != "rectangle" && shapeName != "circle" && shapeName != "triangle" && shapeName != "drawto" && shapeName != "clear" && shapeName != "reset")
+            if (shapeName != "moveto" && shapeName != "colour" && shapeName != "fill" && shapeName != "rectangle" && shapeName != "circle" && shapeName != "triangle" && shapeName != "drawto" && shapeName != "clear" && shapeName != "reset" && shapeName != "rotate")
             {
                 throw new ArgumentException("Invalid command: " + shapeName);
             }
 
-            if (shapeName == "moveto")
+            else if (shapeName == "moveto")
             {
                 if (parts.Length < 3)
                 {
                     throw new ArgumentException(new ExceptionHandler().generateException(402, "moveto", "X and Y coordinates"));
                 }
 
-                if (int.TryParse(parts[1], out int x) && int.TryParse(parts[2], out int y))
+                int x, y;
+
+                if ((int.TryParse(parts[1], out x) || TryGetVariableValue(parts[1], out x)) &&
+                    (int.TryParse(parts[2], out y) || TryGetVariableValue(parts[2], out y)))
                 {
                     if (x >= 0 && x < canvasWidth && y >= 0 && y < canvasHeight)
                     {
                         return (shapeName, x, y, 0, 0, 0, null, true);
                     }
                 }
-                throw new ArgumentException(new ExceptionHandler().generateException(403, "moveto", ""));
 
-                //return (null, 0, 0, 0, 0, 0, null, true);
+                throw new ArgumentException(new ExceptionHandler().generateException(403, "moveto", ""));
             }
+
             else if (shapeName == "colour")
             {
                 if (parts.Length < 2)
@@ -120,7 +123,10 @@ namespace ASEProject
                     throw new ArgumentException(new ExceptionHandler().generateException(402, "rectangle", "width and height"));
                 }
 
-                if (int.TryParse(parts[1], out int rectWidth) && int.TryParse(parts[2], out int rectHeight))
+                int rectWidth, rectHeight;
+
+                if ((int.TryParse(parts[1], out rectWidth) || TryGetVariableValue(parts[1], out rectWidth)) &&
+                    (int.TryParse(parts[2], out rectHeight) || TryGetVariableValue(parts[2], out rectHeight)))
                 {
                     // Validate width and height
                     if (rectWidth <= 0 || rectHeight <= 0)
@@ -135,6 +141,7 @@ namespace ASEProject
                     throw new ArgumentException(new ExceptionHandler().generateException(402, "rectangle", "numeric width and height values"));
                 }
             }
+        
 
             else if (shapeName == "circle")
             {
@@ -143,7 +150,9 @@ namespace ASEProject
                     throw new ArgumentException(new ExceptionHandler().generateException(402, "circle", "radius"));
                 }
 
-                if (int.TryParse(parts[1], out int circleRadius))
+                int circleRadius;
+
+                if (int.TryParse(parts[1], out circleRadius) || TryGetVariableValue(parts[1], out circleRadius))
                 {
                     // Validate radius
                     if (circleRadius <= 0)
@@ -165,7 +174,11 @@ namespace ASEProject
                     throw new ArgumentException(new ExceptionHandler().generateException(402, "triangle", "width, height, and radius"));
                 }
 
-                if (int.TryParse(parts[1], out int triangleWidth) && int.TryParse(parts[2], out int triangleHeight) && int.TryParse(parts[3], out int triangleRadius))
+                int triangleWidth, triangleHeight, triangleRadius;
+
+                if ((int.TryParse(parts[1], out triangleWidth) || TryGetVariableValue(parts[1], out triangleWidth)) &&
+                    (int.TryParse(parts[2], out triangleHeight) || TryGetVariableValue(parts[2], out triangleHeight)) &&
+                    (int.TryParse(parts[3], out triangleRadius) || TryGetVariableValue(parts[3], out triangleRadius)))
                 {
                     // Validate width, height, and radius
                     if (triangleWidth <= 0 || triangleHeight <= 0 || triangleRadius <= 0)
@@ -180,6 +193,7 @@ namespace ASEProject
                     throw new ArgumentException(new ExceptionHandler().generateException(402, "triangle", "numeric width, height, and radius values"));
                 }
             }
+
             else if (shapeName == "drawto")
             {
                 if (parts.Length < 3)
@@ -187,7 +201,10 @@ namespace ASEProject
                     throw new ArgumentException(new ExceptionHandler().generateException(402, "drawto", "width and height"));
                 }
 
-                if (int.TryParse(parts[1], out int drawtoWidth) && int.TryParse(parts[2], out int drawtoHeight))
+                int drawtoWidth, drawtoHeight;
+
+                if ((int.TryParse(parts[1], out drawtoWidth) || TryGetVariableValue(parts[1], out drawtoWidth)) &&
+                    (int.TryParse(parts[2], out drawtoHeight) || TryGetVariableValue(parts[2], out drawtoHeight)))
                 {
                     // Validate width and height
                     if (drawtoWidth <= 0 || drawtoHeight <= 0)
@@ -205,6 +222,31 @@ namespace ASEProject
 
 
             return (shapeName, 0, 0, width, height, radius, null, true);
+        }
+
+        // New method to parse rotate command
+        public float ParseRotateCommand(string command)
+        {
+            string[] parts = command.Split(' ');
+            if (parts.Length != 2)
+            {
+                throw new ArgumentException("Invalid rotate command. Usage: rotate <angle>");
+            }
+
+            float angle;
+            if (!float.TryParse(parts[1], out angle))
+            {
+                throw new ArgumentException("Invalid angle specified in rotate command.");
+            }
+
+            return angle;
+        }
+
+        // Helper method to try to get the variable value
+        private bool TryGetVariableValue(string variableName, out int variableValue)
+        {
+            variableValue = variableManager.GetVariableValue(variableName);
+            return variableValue > 0;
         }
     }
 }

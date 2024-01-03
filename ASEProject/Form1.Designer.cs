@@ -65,7 +65,7 @@
             // 
             // programWindow
             // 
-            this.programWindow.Location = new System.Drawing.Point(12, 30);
+            this.programWindow.Location = new System.Drawing.Point(13, 30);
             this.programWindow.Name = "programWindow";
             this.programWindow.Size = new System.Drawing.Size(363, 315);
             this.programWindow.TabIndex = 2;

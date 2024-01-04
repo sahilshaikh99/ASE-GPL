@@ -218,6 +218,8 @@ namespace ASEProject
                             IsInsideMethodBlock = false;
 
                             methodHandler.DefineMethod(methodCommandList);
+                            methodCommandList.Clear();
+
                         }
                         else
                         {

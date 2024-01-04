@@ -50,7 +50,7 @@ namespace ASEProject
             }
 
             // Check for valid commands
-            if (shapeName != "moveto" && shapeName != "colour" && shapeName != "fill" && shapeName != "rectangle" && shapeName != "circle" && shapeName != "triangle" && shapeName != "drawto" && shapeName != "clear" && shapeName != "reset" && shapeName != "rotate")
+            if (shapeName != "moveto" && shapeName != "colour" && shapeName != "fill" && shapeName != "rectangle" && shapeName != "circle" && shapeName != "triangle" && shapeName != "drawto" && shapeName != "clear" && shapeName != "reset" && shapeName != "rotate" && shapeName != "endwhile")
             {
                 throw new ArgumentException("Invalid command: " + shapeName);
             }

@@ -26,6 +26,9 @@ namespace ASEProject
         private bool IfConditionCheck = false;
         private bool IsInsideWhileBlock = false;
         private bool WhileConditionCheck = false;
+        private bool IsInsideNestedWhileBlock = false;
+        private bool NestedWhileConditionCheck = false;
+
         private bool IsInsideMethodBlock = false;
 
         private readonly IfHandler ifCommandHandler;
@@ -33,7 +36,11 @@ namespace ASEProject
         private MethodHandler methodHandler;
         private string whileCondition = "";
         List<string> myCommandList = new List<string>();
+        List<string> myCommandList2 = new List<string>();
         List<string> methodCommandList = new List<string>();
+        private int loopDepth = 0;
+
+        bool whileConditionRes1 = false;
 
         /// <summary>
         /// Initializes a new instance of the DrawHandler class.
@@ -133,18 +140,47 @@ namespace ASEProject
                         }
 
                     }
-                    else if (IsInsideWhileBlock == true)
+                    else if (IsInsideWhileBlock)
                     {
-
-                        if (command.StartsWith("endloop"))
+                        if (command.StartsWith("endwhile") && IsInsideNestedWhileBlock == false)
                         {
-                            if (WhileConditionCheck == true)
+                            if (WhileConditionCheck)
                             {
-                                while (whileCommandHandler.HandleWhileLoop(whileCondition) == true)
+                                while (whileCommandHandler.HandleWhileLoop(whileCondition))
                                 {
                                     foreach (string value in myCommandList)
                                     {
-                                        HandleShapeDraw(value);
+                                        if (value.StartsWith("while"))
+                                        {
+                                            loopDepth++;
+                                            string nestedCondition = value.Substring(5).Trim();
+
+                                            whileCommandHandler.HandleWhileLoop(nestedCondition);
+
+                                            while (whileCommandHandler.HandleWhileLoop(nestedCondition))
+                                            {
+                                                IsInsideNestedWhileBlock = true;
+
+                                                foreach (string nestedValue in myCommandList2)
+                                                {
+                                                    HandleShapeDraw(nestedValue);
+                                                }
+                                            }
+
+                                            loopDepth--;
+                                        }
+                                        else
+                                        {
+                                            if (value.StartsWith("endwhile"))
+                                            {
+                                                IsInsideNestedWhileBlock = false;
+
+                                            }
+                                            else
+                                            {
+                                                HandleShapeDraw(value);
+                                            }
+                                        }
                                     }
                                 }
 
@@ -155,15 +191,26 @@ namespace ASEProject
                         }
                         else
                         {
+                            if (command.StartsWith("while")){
+                                myCommandList2.Add(command);
+                                IsInsideNestedWhileBlock = true;
+                            }
+                            else if(command.StartsWith("endwhile") && IsInsideNestedWhileBlock == true)
+                            {
+                                myCommandList2.Add(command);
+                                IsInsideNestedWhileBlock = false;
+                            }
+                
+                            myCommandList.Add(command);
+
                             if ((LineNumber + 1) == totalCommand)
                             {
-                                throw new ArgumentException(new ExceptionHandler().generateException(402, "while", "endloop command"));
+                                throw new ArgumentException(new ExceptionHandler().generateException(402, "while", "endwhile comand"));
                             }
-                            myCommandList.Add(command);
 
                         }
                     }
-                
+
                     else if (IsInsideMethodBlock == true)
                     {
                         if (command.StartsWith("endmethod"))

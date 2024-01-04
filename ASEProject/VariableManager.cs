@@ -9,7 +9,7 @@ namespace ASEProject
 
         private Dictionary<string, int> variables = new Dictionary<string, int>();
 
-        private VariableManager() { }
+        public VariableManager() { }
 
         public static VariableManager Instance
         {

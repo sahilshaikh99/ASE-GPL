@@ -58,9 +58,10 @@ namespace ASEProject
         /// <param name="LineNumber">The line number of the command in a multiline input (optional).</param>
         public void ExecuteCommand(string command, int LineNumber = 0, int totalCommand = 0)
         {
+            Console.WriteLine(LineNumber);
             string[] parts = command.Split(' ');
-            string commandName = parts[0].ToLower();
-
+            string commandName = parts[0].ToLower().Trim();
+            Console.WriteLine(commandName);
             try
             {
                 if (commandName == "if")
@@ -118,37 +119,43 @@ namespace ASEProject
                     {
                         HandleShapeDraw(command);
                     }
-                    else if (IfConditionCheck == true && IsInsideIfBlock == true)
+                    else if (IsInsideIfBlock == true)
                     {
-                        if (LineNumber == totalCommand)
+                        if (IfConditionCheck == true)
+                        {
+                            HandleShapeDraw(command);
+                        }
+
+                        Console.WriteLine(LineNumber + " " + totalCommand);
+                        if ((LineNumber + 1) == totalCommand)
                         {
                             throw new ArgumentException(new ExceptionHandler().generateException(402, "if", "endif command"));
                         }
-                        HandleShapeDraw(command);
 
                     }
-                    else if (WhileConditionCheck == true && IsInsideWhileBlock == true)
+                    else if (IsInsideWhileBlock == true)
                     {
-                        Console.WriteLine("in");
+
                         if (command.StartsWith("endloop"))
                         {
-                            while (whileCommandHandler.HandleWhileLoop(whileCondition) == true)
+                            if (WhileConditionCheck == true)
                             {
-                                Console.WriteLine("inside");
-                                foreach (string value in myCommandList)
+                                while (whileCommandHandler.HandleWhileLoop(whileCondition) == true)
                                 {
-                                    Console.WriteLine(value);
-                                    HandleShapeDraw(value);
+                                    foreach (string value in myCommandList)
+                                    {
+                                        HandleShapeDraw(value);
+                                    }
                                 }
-                            }
 
-                            IsInsideWhileBlock = false;
-                            WhileConditionCheck = false;
-                            whileCondition = "";
+                                IsInsideWhileBlock = false;
+                                WhileConditionCheck = false;
+                                whileCondition = "";
+                            }
                         }
                         else
                         {
-                            if (LineNumber == totalCommand)
+                            if ((LineNumber + 1) == totalCommand)
                             {
                                 throw new ArgumentException(new ExceptionHandler().generateException(402, "while", "endloop command"));
                             }
@@ -156,6 +163,7 @@ namespace ASEProject
 
                         }
                     }
+                
                     else if (IsInsideMethodBlock == true)
                     {
                         if (command.StartsWith("endmethod"))
@@ -166,7 +174,7 @@ namespace ASEProject
                         }
                         else
                         {
-                            if (LineNumber == totalCommand)
+                            if ((LineNumber + 1) == totalCommand)
                             {
                                 throw new ArgumentException(new ExceptionHandler().generateException(402, "method", "endmethod command"));
                             }
@@ -334,12 +342,10 @@ namespace ASEProject
             {
                 int totalCommand = commands.Length;
                 int lineNumber = 0;
-                while (lineNumber < totalCommand)
+                foreach (string command in commands)
                 {
-                    string command = commands[lineNumber];
-
                     // Execute the command for each line
-                    ExecuteCommand(command, lineNumber, totalCommand - 1);
+                    ExecuteCommand(command, lineNumber, totalCommand);
 
                     lineNumber++;
                 }

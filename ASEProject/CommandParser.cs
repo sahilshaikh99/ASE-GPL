@@ -28,6 +28,10 @@ namespace ASEProject
             this.syntexCheck = syntexCheck;
         }
 
+        public CommandParser()
+        {
+        }
+
         /// <summary>
         /// Parses a drawing command and extracts relevant information.
         /// </summary>

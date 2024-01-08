@@ -50,7 +50,7 @@ namespace ASEProject
             }
 
             // Check for valid commands
-            if (shapeName != "moveto" && shapeName != "colour" && shapeName != "fill" && shapeName != "rectangle" && shapeName != "circle" && shapeName != "triangle" && shapeName != "drawto" && shapeName != "clear" && shapeName != "reset" && shapeName != "rotate" && shapeName != "endwhile")
+            if (shapeName != "moveto" && shapeName != "colour" && shapeName != "fill" && shapeName != "rectangle" && shapeName != "circle" && shapeName != "triangle" && shapeName != "drawto" && shapeName != "clear" && shapeName != "reset" && shapeName != "rotate" && shapeName != "endwhile" && shapeName != "point")
             {
                 throw new ArgumentException("Invalid command: " + shapeName);
             }
@@ -75,7 +75,26 @@ namespace ASEProject
 
                 throw new ArgumentException(new ExceptionHandler().generateException(403, "moveto", ""));
             }
+            else if (shapeName == "point")
+            {
+                if (parts.Length < 3)
+                {
+                    throw new ArgumentException(new ExceptionHandler().generateException(402, "point", "X and Y coordinates"));
+                }
 
+                int x, y;
+
+                if ((int.TryParse(parts[1], out x) || TryGetVariableValue(parts[1], out x)) &&
+                    (int.TryParse(parts[2], out y) || TryGetVariableValue(parts[2], out y)))
+                {
+                    if (x >= 0 && x < canvasWidth && y >= 0 && y < canvasHeight)
+                    {
+                        return (shapeName, x, y, 0, 0, 0, null, true);
+                    }
+                }
+
+                throw new ArgumentException(new ExceptionHandler().generateException(403, "point", ""));
+            }
             else if (shapeName == "colour")
             {
                 if (parts.Length < 2)
@@ -228,8 +247,12 @@ namespace ASEProject
             return (shapeName, 0, 0, width, height, radius, null, true);
         }
 
-        // New method to parse rotate command
-        public float ParseRotateCommand(string command)
+        /// <summary>
+        /// Parses a rotate command and extracts the rotation angle.
+        /// </summary>
+        /// <param name="command">The rotate command to parse.</param>
+        /// <returns>The rotation angle specified in the command.</returns>
+        public int ParseRotateCommand(string command)
         {
             string[] parts = command.Split(' ');
             if (parts.Length != 2)
@@ -237,8 +260,8 @@ namespace ASEProject
                 throw new ArgumentException("Invalid rotate command. Usage: rotate <angle>");
             }
 
-            float angle;
-            if (!float.TryParse(parts[1], out angle))
+            int angle;
+            if (!int.TryParse(parts[1], out angle))
             {
                 throw new ArgumentException("Invalid angle specified in rotate command.");
             }
@@ -246,8 +269,15 @@ namespace ASEProject
             return angle;
         }
 
-        // Helper method to try to get the variable value
-        private bool TryGetVariableValue(string variableName, out int variableValue)
+    /// <summary>
+    /// Tries to get the value of a variable by its name.
+    /// </summary>
+    /// <param name="variableName">The name of the variable.</param>
+    /// <param name="variableValue">The output variable value if successful.</param>
+    /// <returns>
+    ///   <c>true</c> if the variable value was successfully retrieved; otherwise, <c>false</c>.
+    /// </returns>
+    private bool TryGetVariableValue(string variableName, out int variableValue)
         {
             variableValue = variableManager.GetVariableValue(variableName);
             return variableValue > 0;

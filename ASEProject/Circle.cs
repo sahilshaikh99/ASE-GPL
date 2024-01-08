@@ -9,8 +9,6 @@ namespace ASEProject
     /// </summary>
     public class Circle : Shape
     {
-
-
         /// <summary>
         /// Override the Draw method to draw a circle
         /// </summary>
@@ -22,7 +20,7 @@ namespace ASEProject
         /// <param name="height">This is the height of the shape if defined in some commands</param>
         /// <param name="radius">This is radius of circle</param>
         /// <param name="fill">Draw shapes either filled or outlined</param>
-        public override void Draw(Graphics graphics, Color penColor, int x, int y, int width, int height, int radius, bool fill)
+        public override void Draw(Graphics graphics, Color penColor, int x, int y, int width, int height, int radius, bool fill, int angle)
         {
             // Check if the circle should be filled or outlined
             if (fill)

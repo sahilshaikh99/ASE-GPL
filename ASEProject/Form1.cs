@@ -162,7 +162,10 @@ namespace ASEProject
             drawHandler.ExecuteMultilineCommand(inputCommands);
             canvasShape.Image = drawHandler.GetCanvasImage();
         }
- 
 
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

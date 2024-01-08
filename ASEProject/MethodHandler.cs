@@ -5,6 +5,9 @@ using System.Text.RegularExpressions;
 
 namespace ASEProject
 {
+    /// <summary>
+    /// Handles user-defined methods, their definition, and execution.
+    /// </summary>
     internal class MethodHandler
     {
         private Dictionary<string, string> userDefinedMethods = new Dictionary<string, string>();
@@ -12,6 +15,12 @@ namespace ASEProject
         private DrawHandler drawHandler;
         private List<string> exceptionMessages;
 
+        /// <summary>
+        /// Initializes a new instance of the MethodHandler class.
+        /// </summary>
+        /// <param name="drawHandler">The DrawHandler instance for handling drawing commands.</param>
+        /// <param name="variableManager">The VariableManager instance for managing variables.</param>
+        /// <param name="exceptionMessages">The list to store exception messages.</param>
         public MethodHandler(DrawHandler drawHandler, VariableManager variableManager, List<string> exceptionMessages)
         {
             this.variableManager = variableManager;
@@ -19,11 +28,14 @@ namespace ASEProject
             this.exceptionMessages = exceptionMessages;
         }
 
+        /// <summary>
+        /// Defines a user-defined method based on the provided method definition.
+        /// </summary>
+        /// <param name="methodDefinition">The list of strings representing the method definition.</param>
         public void DefineMethod(List<string> methodDefinition)
         {
             Console.WriteLine(string.Join(", ", methodDefinition));
 
-            // Check if the method has at least two lines (signature and body)
             if (methodDefinition.Count < 2)
             {
                 exceptionMessages.Add("Error: Incomplete method definition.");
@@ -34,10 +46,8 @@ namespace ASEProject
             if (match.Success)
             {
                 string methodName = match.Groups[1].Value;
-                string parameterList = match.Groups[2].Value.Trim(); // Trim to remove leading/trailing spaces
-                Console.WriteLine($"Method Name: {methodName}");
-                Console.WriteLine($"Parameter List: {parameterList}");
-                // Extract method body
+                string parameterList = match.Groups[2].Value.Trim(); 
+        
                 string methodBody = string.Join("\n", methodDefinition.Skip(1)).Trim();
                 Console.WriteLine($"{methodName} {parameterList} {methodBody}");
                 userDefinedMethods[methodName] = $"{parameterList} => {methodBody}";
@@ -48,7 +58,6 @@ namespace ASEProject
                 if (methodNameMatch.Success)
                 {
                     string methodName = methodNameMatch.Groups[1].Value;
-                    // Extract method body
                     string methodBody = string.Join("\n", methodDefinition.Skip(1)).Trim();
                     Console.WriteLine($"{methodName} {methodBody}");
                     userDefinedMethods[methodName] = $" => {methodBody}";
@@ -61,7 +70,10 @@ namespace ASEProject
             }
         }
 
-
+        /// <summary>
+        /// Calls a user-defined method based on the provided method call.
+        /// </summary>
+        /// <param name="methodCall">The method call to execute.</param>
         public void CallMethod(string methodCall)
         {
             int openParenIndex = methodCall.IndexOf('(');
@@ -84,12 +96,17 @@ namespace ASEProject
             }
         }
 
+        /// <summary>
+        /// Executes a user-defined method with the provided name, argument list, and method definition.
+        /// </summary>
+        /// <param name="methodName">The name of the method to execute.</param>
+        /// <param name="argumentList">The argument list for the method call.</param>
+        /// <param name="methodDefinition">The method definition containing parameters and method body.</param>
         private void ExecuteMethod(string methodName, string argumentList, string methodDefinition)
         {
             Console.WriteLine(methodName + " " + argumentList);
 
             Console.WriteLine(methodDefinition);
-            // Parse parameters and method body
             string[] parameters = argumentList.Split(',').Select(p => p.Trim()).ToArray();
             string[] definitionArg = methodDefinition.Split(new[] { "=>" }, StringSplitOptions.None);
             string[] finalArg = definitionArg[0].Split(',');
@@ -110,7 +127,6 @@ namespace ASEProject
             }
 
             string methodBody = methodDefinition.Substring(arrowIndex + 2).Trim();
-            // Map parameters to their values
             Dictionary<string, int> parameterValues = new Dictionary<string, int>();
 
 
@@ -138,7 +154,6 @@ namespace ASEProject
                     // Replace method parameters with values
                     foreach (var parameter in parameterValues)
                     {
-                        // Use Regex.Escape to handle special characters in the parameter
                         methodBody = Regex.Replace(methodBody, $@"\b{Regex.Escape(parameter.Key)}\b", parameter.Value.ToString());
                     }
                 }
@@ -152,6 +167,10 @@ namespace ASEProject
             }
         }
 
+        public bool IsMethodDefined(string methodName)
+        {
+            return userDefinedMethods.ContainsKey(methodName);
+        }
     }
 
 }

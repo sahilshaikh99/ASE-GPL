@@ -147,6 +147,7 @@
             this.Controls.Add(this.saveBtn);
             this.Name = "Form1";
             this.Text = "GPL";
+            this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.canvasShape)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

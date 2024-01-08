@@ -22,7 +22,7 @@ namespace ASEProjectTest
             int radius = 50;
             bool fill = true;
 
-            circle.Draw(graphics, penColor, x, y, 0, 0, radius, fill);
+            circle.Draw(graphics, penColor, x, y, 0, 0, radius, fill, 0);
 
             Color expectedColor = Color.FromArgb(255, 0, 0, 0); // Assuming black is expected
             Color pixelColor = bitmap.GetPixel(x, y);

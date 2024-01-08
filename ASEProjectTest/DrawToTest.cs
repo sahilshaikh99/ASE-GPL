@@ -27,7 +27,7 @@ namespace ASEProjectTest
             int radius = 30;
             bool fill = true;
 
-            drawto.Draw(graphics, penColor, x, y, width, height, radius, fill);
+            drawto.Draw(graphics, penColor, x, y, width, height, radius, fill, 0);
 
             Color expectedColor = Color.FromArgb(255, 0, 0, 0);
             Color pixelColor = bitmap.GetPixel(x, y);

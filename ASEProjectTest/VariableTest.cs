@@ -7,10 +7,16 @@ using System.Threading.Tasks;
 
 namespace ASEProjectTest
 {
+    /// <summary>
+    /// Test class for the VariableManager class.
+    /// </summary>
     [TestClass]
         public class VariableManagerTests
         {
-            [TestMethod]
+        /// <summary>
+        /// Tests the existence check for an existing variable.
+        /// </summary>
+        [TestMethod]
             public void TestVariableExists_ExistingVariable_ReturnsTrue()
             {
                 var variableManager = new VariableManager();
@@ -21,7 +27,10 @@ namespace ASEProjectTest
                 Assert.IsTrue(result);
             }
 
-            [TestMethod]
+        /// <summary>
+        /// Tests the existence check for a non-existing variable.
+        /// </summary>
+        [TestMethod]
             public void TestVariableExists_NonExistingVariable_ReturnsFalse()
             {
                 var variableManager = new VariableManager();
@@ -31,7 +40,10 @@ namespace ASEProjectTest
                 Assert.IsFalse(result);
             }
 
-            [TestMethod]
+        /// <summary>
+        /// Tests retrieving the value of an existing variable.
+        /// </summary>
+        [TestMethod]
             public void TestGetVariableValue_ExistingVariable_ReturnsValue()
             {
                 var variableManager = new VariableManager();
@@ -42,7 +54,10 @@ namespace ASEProjectTest
                 Assert.AreEqual(42, result);
             }
 
-            [TestMethod]
+        /// <summary>
+        /// Tests retrieving the value of a non-existing variable, expecting an exception.
+        /// </summary>
+        [TestMethod]
             [ExpectedException(typeof(ArgumentException))]
             public void TestGetVariableValue_NonExistingVariable_ThrowsArgumentException()
             {
@@ -53,7 +68,10 @@ namespace ASEProjectTest
                 // ArgumentException is expected
             }
 
-            [TestMethod]
+        /// <summary>
+        /// Tests setting the value of a variable.
+        /// </summary>
+        [TestMethod]
             public void TestSetVariableValue_SetVariable_ValueIsSet()
             {
                 var variableManager = new VariableManager();
@@ -63,7 +81,10 @@ namespace ASEProjectTest
                 Assert.AreEqual(42, variableManager.GetVariableValue("x"));
             }
 
-            [TestMethod]
+        /// <summary>
+        /// Tests clearing variables and verifying that no variables exist.
+        /// </summary>
+        [TestMethod]
             public void TestClearVariables_ClearVariables_NoVariables()
             {
                 var variableManager = new VariableManager();
@@ -74,7 +95,10 @@ namespace ASEProjectTest
                 Assert.IsFalse(variableManager.VariableExists("x"));
             }
 
-            [TestMethod]
+        /// <summary>
+        /// Tests retrieving variable names when multiple variables are present.
+        /// </summary>
+        [TestMethod]
             public void TestGetVariableNames_MultipleVariables_ReturnsVariableNames()
             {
                 var variableManager = new VariableManager();
@@ -86,7 +110,10 @@ namespace ASEProjectTest
                 CollectionAssert.AreEquivalent(new[] { "x", "y" }, result.ToArray());
             }
 
-            [TestMethod]
+        /// <summary>
+        /// Tests handling a valid variable assignment and updating the variable value.
+        /// </summary>
+        [TestMethod]
             public void TestHandleVariableAssignment_ValidAssignment_VariableValueUpdated()
             {
                 var variableManager = new VariableManager();
@@ -96,7 +123,10 @@ namespace ASEProjectTest
                 Assert.AreEqual(42, variableManager.GetVariableValue("x"));
             }
 
-            [TestMethod]
+        /// <summary>
+        /// Tests handling an invalid variable assignment, expecting an exception.
+        /// </summary>
+        [TestMethod]
             [ExpectedException(typeof(ArgumentException))]
             public void TestHandleVariableAssignment_InvalidAssignment_ThrowsArgumentException()
             {
@@ -107,7 +137,10 @@ namespace ASEProjectTest
                 // ArgumentException is expected
             }
 
-            [TestMethod]
+        /// <summary>
+        /// Tests evaluating a simple expression and returning the correct value.
+        /// </summary>
+        [TestMethod]
             public void TestEvaluateExpression_SimpleExpression_ReturnsCorrectValue()
             {
                 var variableManager = new VariableManager();
@@ -118,7 +151,10 @@ namespace ASEProjectTest
                 Assert.AreEqual(52, result);
             }
 
-            [TestMethod]
+        /// <summary>
+        /// Tests evaluating a complex expression and returning the correct value.
+        /// </summary>
+        [TestMethod]
             public void TestEvaluateExpression_ComplexExpression_ReturnsCorrectValue()
             {
                 var variableManager = new VariableManager();

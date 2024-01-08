@@ -7,10 +7,16 @@ using System.Threading.Tasks;
 
 namespace ASEProjectTest
 {
-        [TestClass]
+    /// <summary>
+    /// Test class for the MethodHandler class.
+    /// </summary>
+    [TestClass]
         public class MethodHandlerTests
         {
-            [TestMethod]
+        /// <summary>
+        /// Tests the definition of a valid method.
+        /// </summary>
+        [TestMethod]
         public void TestDefineMethod_ValidMethodDefinition()
         {
             DrawHandler drawHandler = new DrawHandler(800, 600, null);
@@ -24,7 +30,9 @@ namespace ASEProjectTest
             Assert.IsTrue(methodHandler.IsMethodDefined("TestMethod"));
         }
 
-
+        /// <summary>
+        /// Tests the definition of a method with an invalid signature.
+        /// </summary>
         [TestMethod]
             public void TestDefineMethod_InvalidMethodSignature()
             {
@@ -39,7 +47,10 @@ namespace ASEProjectTest
                 Assert.IsFalse(methodHandler.IsMethodDefined("TestMethod"));
             }
 
-            [TestMethod]
+        /// <summary>
+        /// Tests calling an undefined method.
+        /// </summary>
+        [TestMethod]
             public void TestCallMethod_UndefinedMethod()
             {
                 DrawHandler drawHandler = new DrawHandler(800, 600, null);
@@ -52,7 +63,10 @@ namespace ASEProjectTest
                 Assert.AreEqual(1, exceptionMessages.Count);
             }
 
-            [TestMethod]
+        /// <summary>
+        /// Tests calling a method with an invalid method call.
+        /// </summary>
+        [TestMethod]
             public void TestCallMethod_InvalidMethodCall()
             {
                 DrawHandler drawHandler = new DrawHandler(800, 600, null);

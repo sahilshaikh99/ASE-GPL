@@ -27,7 +27,7 @@ namespace ASEProjectTest
             int radius = 30;
             bool fill = true;
 
-            triangle.Draw(graphics, penColor, x, y, width, height, radius, fill);
+            triangle.Draw(graphics, penColor, x, y, width, height, radius, fill, 0);
 
             Color expectedColor = Color.FromArgb(255, 0, 0, 0);
             Color pixelColor = bitmap.GetPixel(x, y);

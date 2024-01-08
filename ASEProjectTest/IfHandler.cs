@@ -7,9 +7,15 @@ using System.Threading.Tasks;
 
 namespace ASEProjectTest
 {
-  [TestClass]
+    /// <summary>
+    /// Test class for the IfHandler class.
+    /// </summary>
+    [TestClass]
     public class IfHandlerTests
     {
+        /// <summary>
+        /// Tests the execution of the ExecuteIfBlock method with a numeric comparison.
+        /// </summary>
         [TestMethod]
         public void TestExecuteIfBlock_NumericComparison()
         {
@@ -22,6 +28,10 @@ namespace ASEProjectTest
             Assert.IsTrue(result);
         }
 
+
+        /// <summary>
+        /// Tests the execution of the ExecuteIfBlock method with a variable comparison.
+        /// </summary>
         [TestMethod]
         public void TestExecuteIfBlock_VariableComparison()
         {
@@ -35,6 +45,9 @@ namespace ASEProjectTest
             Assert.IsTrue(result);
         }
 
+        /// <summary>
+        /// Tests the evaluation of a condition with a numeric comparison.
+        /// </summary>
         [TestMethod]
         public void TestEvaluateCondition_NumericComparison()
         {
@@ -47,6 +60,9 @@ namespace ASEProjectTest
             Assert.IsTrue(result);
         }
 
+        /// <summary>
+        /// Tests the evaluation of a condition with a variable comparison.
+        /// </summary>
         [TestMethod]
         public void TestEvaluateCondition_VariableComparison()
         {

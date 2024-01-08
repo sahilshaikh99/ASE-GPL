@@ -70,7 +70,7 @@ namespace ASEProjectTest
             Assert.AreEqual(true, result.Fill);
 
             ASEProject.Rectangle myrectangle = new ASEProject.Rectangle();
-            myrectangle.Draw(graphics, Color.Black, 100, 100, result.Width, result.Height, result.Radius, result.Fill);
+            myrectangle.Draw(graphics, Color.Black, 100, 100, result.Width, result.Height, result.Radius, result.Fill, 0);
 
             // Check if the drawn pixel has the expected color
             Color expectedColor = Color.FromArgb(255, 0, 0, 0); // Assuming black is expected

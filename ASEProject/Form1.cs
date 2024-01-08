@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
@@ -20,6 +21,10 @@ namespace ASEProject
         private DrawHandler drawHandler;      // Manages drawing on the canvas
         private FileHandler FileHandler = new FileHandler(); // Handles file operations
         private SyntexCheck syntexCheck;      // Checks syntax and display errors on the canvas
+
+        private Thread thread1;
+        private Thread thread2;
+        private object canvasLock = new object();
 
         /// <summary>
         /// Constructor for the main form.
@@ -90,7 +95,8 @@ namespace ASEProject
         private void button3_Click(object sender, EventArgs e)
         {
             string userInput = commandBox.Text;
-            string inputCommands = programWindow.Text;
+            string inputCommands1 = programWindow.Text;
+            string inputCommands2 = programWindow1.Text;
 
             // Execute single command
             if (!string.IsNullOrEmpty(userInput))
@@ -99,12 +105,48 @@ namespace ASEProject
                 canvasShape.Image = drawHandler.GetCanvasImage();
             }
 
-            // Execute multiple commands
-            if (!string.IsNullOrEmpty(inputCommands))
+            // Execute multiple commands for Program Window 1
+            if (!string.IsNullOrEmpty(inputCommands1))
             {
-                drawHandler.ExecuteMultilineCommand(inputCommands);
-                canvasShape.Image = drawHandler.GetCanvasImage();
+                ExecuteMultilineCommandInThread(inputCommands1, 1);
             }
+
+            // Execute multiple commands for Program Window 2
+            if (!string.IsNullOrEmpty(inputCommands2))
+            {
+                ExecuteMultilineCommandInThread(inputCommands2, 2);
+            }
+            canvasShape.Image = drawHandler.GetCanvasImage();
+        }
+
+        private void ExecuteMultilineCommandInThread(string commands, int programNumber)
+        {
+            Thread thread;
+            if (programNumber == 1)
+            {
+                thread = thread1;
+            }
+            else
+            {
+                thread = thread2;
+            }
+
+            thread = new Thread(() =>
+            {
+                try
+                {
+                    drawHandler.ExecuteMultilineCommand(commands);
+                }
+                catch (Exception ex)
+                {
+                    Invoke(new Action(() =>
+                    {
+                        MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }));
+                }
+            });
+
+            thread.Start();
         }
 
         // Event handler for Clear button
@@ -164,6 +206,11 @@ namespace ASEProject
         }
 
         private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void programWindow1_TextChanged(object sender, EventArgs e)
         {
 
         }

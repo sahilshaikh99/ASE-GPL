@@ -37,6 +37,7 @@
             this.clearBtn = new System.Windows.Forms.Button();
             this.canvasShape = new System.Windows.Forms.PictureBox();
             this.penColorSelectorButton = new System.Windows.Forms.Button();
+            this.programWindow1 = new System.Windows.Forms.RichTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.canvasShape)).BeginInit();
             this.SuspendLayout();
             // 
@@ -131,11 +132,21 @@
             this.penColorSelectorButton.UseVisualStyleBackColor = true;
             this.penColorSelectorButton.Click += new System.EventHandler(this.button1_Click_1);
             // 
+            // programWindow1
+            // 
+            this.programWindow1.Location = new System.Drawing.Point(395, 348);
+            this.programWindow1.Name = "programWindow1";
+            this.programWindow1.Size = new System.Drawing.Size(435, 107);
+            this.programWindow1.TabIndex = 9;
+            this.programWindow1.Text = "";
+            this.programWindow1.TextChanged += new System.EventHandler(this.programWindow1_TextChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(842, 438);
+            this.ClientSize = new System.Drawing.Size(842, 474);
+            this.Controls.Add(this.programWindow1);
             this.Controls.Add(this.penColorSelectorButton);
             this.Controls.Add(this.canvasShape);
             this.Controls.Add(this.clearBtn);
@@ -165,6 +176,7 @@
         private System.Windows.Forms.Button clearBtn;
         private System.Windows.Forms.PictureBox canvasShape;
         private System.Windows.Forms.Button penColorSelectorButton;
+        private System.Windows.Forms.RichTextBox programWindow1;
     }
 }
 

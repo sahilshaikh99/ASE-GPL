@@ -67,6 +67,7 @@ namespace ASEProject
         List<string> methodCommandList = new List<string>();
         private int loopDepth = 0;
         private int angle = 0;
+        private object canvasLock = new object();
 
         bool whileConditionRes1 = false;
 
@@ -98,210 +99,213 @@ namespace ASEProject
         /// <param name="LineNumber">The line number of the command in a multiline input (optional).</param>
         public void ExecuteCommand(string command, int LineNumber = 0, int totalCommand = 0)
         {
-            Console.WriteLine(LineNumber);
-            string[] parts = command.Split(' ');
-            string commandName = parts[0].ToLower().Trim();
-            Console.WriteLine(commandName);
-            try
+            lock (canvasLock) // Ensure thread safety
             {
-                if (commandName == "if")
+                Console.WriteLine(LineNumber);
+                string[] parts = command.Split(' ');
+                string commandName = parts[0].ToLower().Trim();
+                Console.WriteLine(commandName);
+                try
                 {
-                    IsInsideIfBlock = true;
-                    // Extract the condition from the command (excluding "if")
-                    string condition = command.Substring(2).Trim();
-
-                    // Evaluate the condition
-                    bool ifConditionRes = ifCommandHandler.ExecuteIfBlock(condition);
-
-                    // Check if the condition is true
-                    if (ifConditionRes)
+                    if (commandName == "if")
                     {
-                        IfConditionCheck = true;
+                        IsInsideIfBlock = true;
+                        // Extract the condition from the command (excluding "if")
+                        string condition = command.Substring(2).Trim();
+
+                        // Evaluate the condition
+                        bool ifConditionRes = ifCommandHandler.ExecuteIfBlock(condition);
+
+                        // Check if the condition is true
+                        if (ifConditionRes)
+                        {
+                            IfConditionCheck = true;
+
+                        }
+                    }
+                    else if (commandName == "endif")
+                    {
+                        // Handle endif statement by resetting IsInsideIfBlock to false
+                        IsInsideIfBlock = false;
+                        IfConditionCheck = false;
+                    }
+                    else if (commandName == "while")
+                    {
+                        IsInsideWhileBlock = true;
+
+                        string condition = command.Substring(5).Trim();
+                        whileCondition = condition;
+
+                        // Handle while statement using WhileHandler
+                        bool whileConditionRes = whileCommandHandler.HandleWhileLoop(condition);
+
+                        // Check if the condition is true
+                        if (whileConditionRes)
+                        {
+                            WhileConditionCheck = true;
+                        }
+                    }
+                    else if (IsMethodDefinition(command))
+                    {
+                        IsInsideMethodBlock = true;
+
+                        methodCommandList.Add(command);
 
                     }
-                }
-                else if (commandName == "endif")
-                {
-                    // Handle endif statement by resetting IsInsideIfBlock to false
-                    IsInsideIfBlock = false;
-                    IfConditionCheck = false;
-                }
-                else if (commandName == "while")
-                {
-                    IsInsideWhileBlock = true;
-
-                    string condition = command.Substring(5).Trim();
-                    whileCondition = condition;
-
-                    // Handle while statement using WhileHandler
-                    bool whileConditionRes = whileCommandHandler.HandleWhileLoop(condition);
-
-                    // Check if the condition is true
-                    if (whileConditionRes)
+                    else if (IsMethodCall(command))
                     {
-                        WhileConditionCheck = true;
+                        methodHandler.CallMethod(command);
                     }
-                }
-                else if (IsMethodDefinition(command))
-                {
-                    IsInsideMethodBlock = true;
-
-                    methodCommandList.Add(command);
-
-                }
-                else if (IsMethodCall(command))
-                {
-                    methodHandler.CallMethod(command);
-                }
-                else if (commandName == "custom")
-                {
-                    // Start of a custom shape definition
-                    isInsideCustomShape = true;
-                    customShapePoints.Clear();
-                }
-                else if (isInsideCustomShape && commandName == "point")
-                {
-                    // Add the point to the custom shape
-                    var (shapeName, x, y, _, _, _, _, _) = commandParser.ParseCommand(command, canvasBitmap.Width, canvasBitmap.Height);
-                    customShapePoints.Add(new Point(x, y));
-                }
-
-                else if (commandName == "endcustom")
-                {
-                    // End of a custom shape definition, draw the shape
-                    isInsideCustomShape = false;
-
-                    if (customShapePoints.Count >= 3)
+                    else if (commandName == "custom")
                     {
-                        // Assuming a custom shape needs at least 3 points to be valid
-                        DrawCustomShape(customShapePoints);
+                        // Start of a custom shape definition
+                        isInsideCustomShape = true;
+                        customShapePoints.Clear();
+                    }
+                    else if (isInsideCustomShape && commandName == "point")
+                    {
+                        // Add the point to the custom shape
+                        var (shapeName, x, y, _, _, _, _, _) = commandParser.ParseCommand(command, canvasBitmap.Width, canvasBitmap.Height);
+                        customShapePoints.Add(new Point(x, y));
+                    }
+
+                    else if (commandName == "endcustom")
+                    {
+                        // End of a custom shape definition, draw the shape
+                        isInsideCustomShape = false;
+
+                        if (customShapePoints.Count >= 3)
+                        {
+                            // Assuming a custom shape needs at least 3 points to be valid
+                            DrawCustomShape(customShapePoints);
+                        }
+                        else
+                        {
+                            throw new ArgumentException("A custom shape must have at least 3 points.");
+                        }
+                    }
+                    else if (commandName == "rotate")
+                    {
+                        int angleres = commandParser.ParseRotateCommand(command);
+                        angle = angleres;
                     }
                     else
                     {
-                        throw new ArgumentException("A custom shape must have at least 3 points.");
-                    }
-                }
-                else if (commandName == "rotate")
-                {
-                    int angleres = commandParser.ParseRotateCommand(command);
-                    angle = angleres;
-                }
-                else
-                {
-                    if (IsInsideIfBlock == false && IsInsideWhileBlock == false && IsInsideMethodBlock == false)
-                    {
-                        HandleShapeDraw(command);
-                    }
-                    else if (IsInsideIfBlock == true)
-                    {
-                        if (IfConditionCheck == true)
+                        if (IsInsideIfBlock == false && IsInsideWhileBlock == false && IsInsideMethodBlock == false)
                         {
                             HandleShapeDraw(command);
                         }
-
-                        Console.WriteLine(LineNumber + " " + totalCommand);
-                        if ((LineNumber + 1) == totalCommand)
+                        else if (IsInsideIfBlock == true)
                         {
-                            throw new ArgumentException(new ExceptionHandler().generateException(402, "if", "endif command"));
-                        }
-
-                    }
-                    else if (IsInsideWhileBlock)
-                    {
-                        if (command.StartsWith("endwhile") && IsInsideNestedWhileBlock == false)
-                        {
-                            if (WhileConditionCheck)
+                            if (IfConditionCheck == true)
                             {
-                                while (whileCommandHandler.HandleWhileLoop(whileCondition))
+                                HandleShapeDraw(command);
+                            }
+
+                            Console.WriteLine(LineNumber + " " + totalCommand);
+                            if ((LineNumber + 1) == totalCommand)
+                            {
+                                throw new ArgumentException(new ExceptionHandler().generateException(402, "if", "endif command"));
+                            }
+
+                        }
+                        else if (IsInsideWhileBlock)
+                        {
+                            if (command.StartsWith("endwhile") && IsInsideNestedWhileBlock == false)
+                            {
+                                if (WhileConditionCheck)
                                 {
-                                    foreach (string value in myCommandList)
+                                    while (whileCommandHandler.HandleWhileLoop(whileCondition))
                                     {
-                                        if (value.StartsWith("while"))
+                                        foreach (string value in myCommandList)
                                         {
-                                            loopDepth++;
-                                            string nestedCondition = value.Substring(5).Trim();
-
-                                            whileCommandHandler.HandleWhileLoop(nestedCondition);
-
-                                            while (whileCommandHandler.HandleWhileLoop(nestedCondition))
+                                            if (value.StartsWith("while"))
                                             {
-                                                IsInsideNestedWhileBlock = true;
+                                                loopDepth++;
+                                                string nestedCondition = value.Substring(5).Trim();
 
-                                                foreach (string nestedValue in myCommandList2)
+                                                whileCommandHandler.HandleWhileLoop(nestedCondition);
+
+                                                while (whileCommandHandler.HandleWhileLoop(nestedCondition))
                                                 {
-                                                    HandleShapeDraw(nestedValue);
+                                                    IsInsideNestedWhileBlock = true;
+
+                                                    foreach (string nestedValue in myCommandList2)
+                                                    {
+                                                        HandleShapeDraw(nestedValue);
+                                                    }
                                                 }
-                                            }
 
-                                            loopDepth--;
-                                        }
-                                        else
-                                        {
-                                            if (value.StartsWith("endwhile"))
-                                            {
-                                                IsInsideNestedWhileBlock = false;
-
+                                                loopDepth--;
                                             }
                                             else
                                             {
-                                                HandleShapeDraw(value);
+                                                if (value.StartsWith("endwhile"))
+                                                {
+                                                    IsInsideNestedWhileBlock = false;
+
+                                                }
+                                                else
+                                                {
+                                                    HandleShapeDraw(value);
+                                                }
                                             }
                                         }
                                     }
+
+                                    IsInsideWhileBlock = false;
+                                    WhileConditionCheck = false;
+                                    whileCondition = "";
+                                }
+                            }
+                            else
+                            {
+                                if (command.StartsWith("while"))
+                                {
+                                    myCommandList2.Add(command);
+                                    IsInsideNestedWhileBlock = true;
+                                }
+                                else if (command.StartsWith("endwhile") && IsInsideNestedWhileBlock == true)
+                                {
+                                    myCommandList2.Add(command);
+                                    IsInsideNestedWhileBlock = false;
                                 }
 
-                                IsInsideWhileBlock = false;
-                                WhileConditionCheck = false;
-                                whileCondition = "";
+                                myCommandList.Add(command);
+
+                                if ((LineNumber + 1) == totalCommand)
+                                {
+                                    throw new ArgumentException(new ExceptionHandler().generateException(402, "while", "endwhile comand"));
+                                }
+
                             }
                         }
-                        else
+
+                        else if (IsInsideMethodBlock == true)
                         {
-                            if (command.StartsWith("while"))
+                            if (command.StartsWith("endmethod"))
                             {
-                                myCommandList2.Add(command);
-                                IsInsideNestedWhileBlock = true;
+                                IsInsideMethodBlock = false;
+
+                                methodHandler.DefineMethod(methodCommandList);
+                                methodCommandList.Clear();
+
                             }
-                            else if (command.StartsWith("endwhile") && IsInsideNestedWhileBlock == true)
+                            else
                             {
-                                myCommandList2.Add(command);
-                                IsInsideNestedWhileBlock = false;
+                                if ((LineNumber + 1) == totalCommand)
+                                {
+                                    throw new ArgumentException(new ExceptionHandler().generateException(402, "method", "endmethod command"));
+                                }
+                                methodCommandList.Add(command);
                             }
-
-                            myCommandList.Add(command);
-
-                            if ((LineNumber + 1) == totalCommand)
-                            {
-                                throw new ArgumentException(new ExceptionHandler().generateException(402, "while", "endwhile comand"));
-                            }
-
-                        }
-                    }
-
-                    else if (IsInsideMethodBlock == true)
-                    {
-                        if (command.StartsWith("endmethod"))
-                        {
-                            IsInsideMethodBlock = false;
-
-                            methodHandler.DefineMethod(methodCommandList);
-                            methodCommandList.Clear();
-
-                        }
-                        else
-                        {
-                            if ((LineNumber + 1) == totalCommand)
-                            {
-                                throw new ArgumentException(new ExceptionHandler().generateException(402, "method", "endmethod command"));
-                            }
-                            methodCommandList.Add(command);
                         }
                     }
                 }
-            }
-            catch (ArgumentException ex)
-            {
-                exceptionMessages.Add($"Error at line {LineNumber + 1}: {ex.Message}");
+                catch (ArgumentException ex)
+                {
+                    exceptionMessages.Add($"Error at line {LineNumber + 1}: {ex.Message}");
+                }
             }
         }
 
@@ -430,7 +434,10 @@ namespace ASEProject
 
                 if (canvasShape != null)
                 {
-                    canvasShape.Image = (Image)canvasBitmap.Clone();
+                    lock (canvasLock)
+                    {
+                        canvasShape.Image = (Image)canvasBitmap.Clone();
+                    }
                 }
 
                 ShowException();

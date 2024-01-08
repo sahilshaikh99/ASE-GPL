@@ -9,6 +9,7 @@ namespace ASEProject
     /// </summary>
     public abstract class Shape
     {
+
         /// <summary>
         /// Abstract method to be implemented by derived classes for drawing shapes.
         /// </summary>
@@ -20,7 +21,10 @@ namespace ASEProject
         /// <param name="height">Height of the shape if defined in some commands.</param>
         /// <param name="radius">Radius of the shape if applicable (e.g., for circles).</param>
         /// <param name="fill">Determines whether to draw shapes filled or outlined.</param>
-        public abstract void Draw(Graphics graphics, Color pencolor, int x, int y, int width, int height, int radius, bool fill);
+        /// <param name="angle">This parameter is used for rotation of shapes.</param>
+
+        public abstract void Draw(Graphics graphics, Color pencolor, int x, int y, int width, int height, int radius, bool fill, int angle);
+
 
     }
 }

@@ -12,14 +12,41 @@ namespace ASEProject
     /// </summary>
     public class DrawHandler
     {
+        /// <summary>
+        /// The canvas bitmap used for drawing shapes.
+        /// </summary>
         private Bitmap canvasBitmap;
+        /// <summary>
+        /// The current pen color for drawing shapes.
+        /// </summary>
         private Color penColor = Color.Black;
+        /// <summary>
+        /// Flag indicating whether shapes should be filled.
+        /// </summary>
         private bool fillShapes = false;
+        /// <summary>
+        /// List to store the shapes drawn on the canvas.
+        /// </summary>
         private List<Shape> myShapes = new List<Shape>();
+        /// <summary>
+        /// Command handler for processing drawing commands.
+        /// </summary>
         private CommandHandler commandHandler = new CommandHandler();
+        /// <summary>
+        /// PictureBox representing the canvas (optional).
+        /// </summary>
         private PictureBox canvasShape;
+        /// <summary>
+        /// List to store exception messages.
+        /// </summary>
         private List<string> exceptionMessages = new List<string>();
+        /// <summary>
+        /// Instance of VariableManager for managing variables.
+        /// </summary>
         private readonly VariableManager variableManager = VariableManager.Instance;
+        /// <summary>
+        /// Instance of CommandParser for parsing drawing commands.
+        /// </summary>
         private readonly CommandParser commandParser;
 
         private bool IsInsideIfBlock = false;
@@ -39,9 +66,15 @@ namespace ASEProject
         List<string> myCommandList2 = new List<string>();
         List<string> methodCommandList = new List<string>();
         private int loopDepth = 0;
+        private int angle = 0;
 
         bool whileConditionRes1 = false;
 
+        // Add a new property to store custom shape points
+        private List<Point> customShapePoints = new List<Point>();
+
+        // Add a flag to indicate when the parser is inside a custom shape definition
+        private bool isInsideCustomShape = false;
         /// <summary>
         /// Initializes a new instance of the DrawHandler class.
         /// </summary>
@@ -55,7 +88,7 @@ namespace ASEProject
             commandParser = new CommandParser(this);
             ifCommandHandler = new IfHandler(variableManager);
             whileCommandHandler = new WhileHandler(variableManager);
-            methodHandler = new MethodHandler(this, variableManager, exceptionMessages);  // Pass exceptionMessages
+            methodHandler = new MethodHandler(this, variableManager, exceptionMessages);  
         }
 
         /// <summary>
@@ -119,6 +152,39 @@ namespace ASEProject
                 else if (IsMethodCall(command))
                 {
                     methodHandler.CallMethod(command);
+                }
+                else if (commandName == "custom")
+                {
+                    // Start of a custom shape definition
+                    isInsideCustomShape = true;
+                    customShapePoints.Clear();
+                }
+                else if (isInsideCustomShape && commandName == "point")
+                {
+                    // Add the point to the custom shape
+                    var (shapeName, x, y, _, _, _, _, _) = commandParser.ParseCommand(command, canvasBitmap.Width, canvasBitmap.Height);
+                    customShapePoints.Add(new Point(x, y));
+                }
+
+                else if (commandName == "endcustom")
+                {
+                    // End of a custom shape definition, draw the shape
+                    isInsideCustomShape = false;
+
+                    if (customShapePoints.Count >= 3)
+                    {
+                        // Assuming a custom shape needs at least 3 points to be valid
+                        DrawCustomShape(customShapePoints);
+                    }
+                    else
+                    {
+                        throw new ArgumentException("A custom shape must have at least 3 points.");
+                    }
+                }
+                else if (commandName == "rotate")
+                {
+                    int angleres = commandParser.ParseRotateCommand(command);
+                    angle = angleres;
                 }
                 else
                 {
@@ -191,16 +257,17 @@ namespace ASEProject
                         }
                         else
                         {
-                            if (command.StartsWith("while")){
+                            if (command.StartsWith("while"))
+                            {
                                 myCommandList2.Add(command);
                                 IsInsideNestedWhileBlock = true;
                             }
-                            else if(command.StartsWith("endwhile") && IsInsideNestedWhileBlock == true)
+                            else if (command.StartsWith("endwhile") && IsInsideNestedWhileBlock == true)
                             {
                                 myCommandList2.Add(command);
                                 IsInsideNestedWhileBlock = false;
                             }
-                
+
                             myCommandList.Add(command);
 
                             if ((LineNumber + 1) == totalCommand)
@@ -238,6 +305,10 @@ namespace ASEProject
             }
         }
 
+        /// <summary>
+        /// Handles drawing shapes based on the given command.
+        /// </summary>
+        /// <param name="command">The drawing command to execute.</param>
         private void HandleShapeDraw(string command)
         {
             using (Graphics graphics = Graphics.FromImage(canvasBitmap))
@@ -245,7 +316,7 @@ namespace ASEProject
                 // Check if the command is a variable assignment
                 if (command.Contains("="))
                 {
-                    HandleVariableAssignment(command);
+                    variableManager.HandleVariableAssignment(command);
                 }
                 else
                 {
@@ -276,8 +347,10 @@ namespace ASEProject
                         else
                         {
                             Shape shape = new CreateShape().MakeShape(shapeName);
+
                             myShapes.Add(shape);
-                            shape.Draw(graphics, penColor, commandHandler.CursorPosX, commandHandler.CursorPosY, width, height, radius, fillShapes);
+
+                            shape.Draw(graphics, penColor, commandHandler.CursorPosX, commandHandler.CursorPosY, width, height, radius, fillShapes, angle);
                         }
                     }
                     else
@@ -290,80 +363,36 @@ namespace ASEProject
             }
         }
 
-        private void HandleVariableAssignment(string command)
-        {
-            // Split the command by '=' and remove extra spaces
-            string[] assignmentParts = command.Split('=').Select(part => part.Trim()).ToArray();
 
-            if (assignmentParts.Length == 2)
-            {
-                string variableName = assignmentParts[0];
-                string expression = assignmentParts[1];
-                    // Check if the variable exists
-                    if (variableManager.VariableExists(variableName))
-                    {
-                        // Evaluate the expression and update the variable value
-                        int result = EvaluateExpression(expression);
-                        variableManager.SetVariableValue(variableName, result);
-                    }
-                    else
-                    {
-                        // If the variable doesn't exist, create it
-                        int result = EvaluateExpression(expression);
-                        variableManager.SetVariableValue(variableName, result);
-                    }
-                }
-               
-//                    throw new ArgumentException(new ExceptionHandler().generateException(402, "variable", "numeric value."));
-            else
-            {
-                throw new ArgumentException(new ExceptionHandler().generateException(402, "variable", "valid variable assignment command."));
-            }
-        }
-
-
-        private int EvaluateExpression(string expression)
-        {
-            Dictionary<string, int> variableValues = new Dictionary<string, int>();
-
-            foreach (var variableName in variableManager.GetVariableNames())
-            {
-                variableValues[variableName] = variableManager.GetVariableValue(variableName);
-            }
-
-            return EvaluateExpressionRecursive(expression, variableValues);
-        }
-
-        private int EvaluateExpressionRecursive(string expression, Dictionary<string, int> variableValues)
-        {
-            if (int.TryParse(expression, out int value))
-            {
-                return value;
-            }
-
-            foreach (var variableName in variableValues.Keys)
-            {
-                string variableExpression = $"{variableName}";
-
-                if (expression.Contains(variableExpression))
-                {
-                    expression = expression.Replace(variableExpression, variableValues[variableName].ToString());
-                }
-            }
-
-            DataTable table = new DataTable();
-            var result = table.Compute(expression, "");
-            return Convert.ToInt32(result);
-        }
-
+        /// <summary>
+        /// Checks if the given command represents a method call.
+        /// </summary>
+        /// <param name="command">The command to check.</param>
+        /// <returns>True if the command is a method call, otherwise false.</returns>
         private bool IsMethodCall(string command)
         {
             return command.Contains("(") && command.Contains(")");
         }
 
+        /// <summary>
+        /// Checks if the given command represents a method definition.
+        /// </summary>
+        /// <param name="command">The command to check.</param>
+        /// <returns>True if the command is a method definition, otherwise false.</returns>
         private bool IsMethodDefinition(string command)
         {
             return command.StartsWith("method");
+        }
+
+        // Add a method to draw the custom shape
+        private void DrawCustomShape(List<Point> points)
+        {
+            using (Graphics graphics = Graphics.FromImage(canvasBitmap))
+            {
+                // Assuming a simple polyline for the custom shape
+                graphics.DrawPolygon(new Pen(penColor), points.ToArray());
+            }
+            UpdateCanvasImage();
         }
 
         /// <summary>
@@ -416,6 +445,7 @@ namespace ASEProject
         {
             penColor = Color.Black;
             fillShapes = false;
+            angle = 0;
             myShapes.Clear();
             exceptionMessages.Clear();
             VariableManager.Instance.ClearVariables();
@@ -512,5 +542,6 @@ namespace ASEProject
         {
             throw new ArgumentException();
         }
+
     }
 }

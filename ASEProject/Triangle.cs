@@ -20,16 +20,18 @@ namespace ASEProject
         /// <param name="height">This is the height of the shape if defined in some commands</param>
         /// <param name="radius">This is the radius of the triangle</param>
         /// <param name="fill">Draw shapes either filled or outlined</param>
-        public override void Draw(Graphics graphics, Color penColor, int x, int y, int width, int height, int radius, bool fill)
+        /// <param name="angle">Rotation angle</param>
+        public override void Draw(Graphics graphics, Color penColor, int x, int y, int width, int height, int radius, bool fill, int angle)
         {
             if (fill)
             {
-                // Calculate vertex points for a filled triangle
                 Point[] points = {
                     new Point(x - width / 2, y + height / 2),
                     new Point(x + width / 2, y + height / 2),
                     new Point(x, y - radius)
                 };
+
+                RotatePoints(points, new Point(x, y), angle);
 
                 using (Brush brush = new SolidBrush(penColor))
                 {
@@ -38,17 +40,33 @@ namespace ASEProject
             }
             else
             {
-                // Calculate vertex points for an outlined triangle
                 Point[] points = {
                     new Point(x - width / 2, y + height / 2),
                     new Point(x + width / 2, y + height / 2),
                     new Point(x, y - radius)
                 };
 
+                RotatePoints(points, new Point(x, y), angle);
+
                 using (Pen pen = new Pen(penColor))
                 {
                     graphics.DrawPolygon(pen, points);
                 }
+            }
+        }
+
+        // Helper method to rotate points around a pivot point
+        private void RotatePoints(Point[] points, Point pivot, int angle)
+        {
+            double angleRad = angle * (Math.PI / 180.0);
+
+            for (int i = 0; i < points.Length; i++)
+            {
+                int dx = points[i].X - pivot.X;
+                int dy = points[i].Y - pivot.Y;
+
+                points[i].X = (int)(pivot.X + dx * Math.Cos(angleRad) - dy * Math.Sin(angleRad));
+                points[i].Y = (int)(pivot.Y + dx * Math.Sin(angleRad) + dy * Math.Cos(angleRad));
             }
         }
     }

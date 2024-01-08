@@ -21,28 +21,31 @@ namespace ASEProject
         /// <param name="height">This is the height of the shape if defined in some commands</param>
         /// <param name="radius">This is not applicable for a rectangle</param>
         /// <param name="fill">Draw shapes either filled or outlined</param>
-        public override void Draw(Graphics graphics, Color penColor, int x, int y, int width, int height, int radius, bool fill)
-        {
-            // Calculate the top-left corner coordinates for the rectangle
-            int topLeftX = x - width / 2;
-            int topLeftY = y - height / 2;
+        /// <param name="angle">This parameter is used for rotation of shapes.</param>
 
-            if (fill)
+        public override void Draw(Graphics graphics, Color penColor, int cursorPosX, int cursorPosY, int width, int height, int radius, bool fill, int angle)
+        {
+            using (Pen pen = new Pen(penColor))
             {
-                // Draw a filled rectangle
-                using (Brush brush = new SolidBrush(penColor))
+                if (fill)
                 {
-                    graphics.FillRectangle(brush, topLeftX, topLeftY, width, height);
+                    using (Brush brush = new SolidBrush(penColor))
+                    {
+                        graphics.TranslateTransform(cursorPosX + width / 2, cursorPosY + height / 2);
+                        graphics.RotateTransform(angle);
+                        graphics.FillRectangle(brush, -width / 2, -height / 2, width, height);
+                        graphics.ResetTransform();
+                    }
                 }
-            }
-            else
-            {
-                // Draw an outlined rectangle
-                using (Pen pen = new Pen(penColor))
+                else
                 {
-                    graphics.DrawRectangle(pen, topLeftX, topLeftY, width, height);
+                    graphics.TranslateTransform(cursorPosX + width / 2, cursorPosY + height / 2);
+                    graphics.RotateTransform(angle);
+                    graphics.DrawRectangle(pen, -width / 2, -height / 2, width, height);
+                    graphics.ResetTransform();
                 }
             }
         }
+
     }
-}
+    }

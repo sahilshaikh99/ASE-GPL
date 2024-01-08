@@ -13,7 +13,6 @@ namespace ASEProject
     /// </summary>
     public class DrawTo : Shape
     {
-        private float rotationAngle;
 
         /// <summary>
         /// Draws a line from one point to another on the canvas.
@@ -26,7 +25,8 @@ namespace ASEProject
         /// <param name="height">The y-coordinate of the ending point of the line.</param>
         /// <param name="radius">This parameter is not used for drawing a line.</param>
         /// <param name="fill">This parameter is not used for drawing a line.</param>
-        public override void Draw(Graphics graphics, Color penColor, int x, int y, int width, int height, int radius, bool fill)
+        /// <param name="angle">This parameter is used for rotation of shapes.</param>
+        public override void Draw(Graphics graphics, Color penColor, int x, int y, int width, int height, int radius, bool fill, int angle)
         {
             // Draw a line from the starting point (x, y) to the ending point (width, height)
             graphics.DrawLine(new Pen(penColor), x, y, width, height);

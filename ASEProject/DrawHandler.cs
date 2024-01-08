@@ -67,7 +67,8 @@ namespace ASEProject
         List<string> methodCommandList = new List<string>();
         private int loopDepth = 0;
         private int angle = 0;
-        private object canvasLock = new object();
+        private object resourceLock = new object();
+        private bool isResourceLocked = false;
 
         bool whileConditionRes1 = false;
 
@@ -99,7 +100,7 @@ namespace ASEProject
         /// <param name="LineNumber">The line number of the command in a multiline input (optional).</param>
         public void ExecuteCommand(string command, int LineNumber = 0, int totalCommand = 0)
         {
-            lock (canvasLock) // Ensure thread safety
+            lock (resourceLock)
             {
                 Console.WriteLine(LineNumber);
                 string[] parts = command.Split(' ');
@@ -308,65 +309,78 @@ namespace ASEProject
                 }
             }
         }
-
         /// <summary>
         /// Handles drawing shapes based on the given command.
         /// </summary>
         /// <param name="command">The drawing command to execute.</param>
         private void HandleShapeDraw(string command)
         {
-            using (Graphics graphics = Graphics.FromImage(canvasBitmap))
+            // Use lock to synchronize access to the critical section
+            lock (resourceLock)
             {
-                // Check if the command is a variable assignment
-                if (command.Contains("="))
+                using (Graphics graphics = Graphics.FromImage(canvasBitmap))
                 {
-                    variableManager.HandleVariableAssignment(command);
-                }
-                else
-                {
-                    var (shapeName, x, y, width, height, radius, penColorName, fill) = commandParser.ParseCommand(command, canvasBitmap.Width, canvasBitmap.Height);
-
-                    if (shapeName != null)
+                    // Check if the command is a variable assignment
+                    if (command.Contains("="))
                     {
-                        if (shapeName == "moveto")
-                        {
-                            commandHandler.MoveTo(x, y);
-                        }
-                        else if (shapeName == "colour")
-                        {
-                            SetPenColor(Color.FromName(penColorName));
-                        }
-                        else if (shapeName == "fill")
-                        {
-                            fillShapes = fill;
-                        }
-                        else if (shapeName == "reset")
-                        {
-                            commandHandler.ResetCursor();
-                        }
-                        else if (shapeName == "clear")
-                        {
-                            ClearCanvas();
-                        }
-                        else
-                        {
-                            Shape shape = new CreateShape().MakeShape(shapeName);
-
-                            myShapes.Add(shape);
-
-                            shape.Draw(graphics, penColor, commandHandler.CursorPosX, commandHandler.CursorPosY, width, height, radius, fillShapes, angle);
-                        }
+                        variableManager.HandleVariableAssignment(command);
                     }
                     else
                     {
-                        throw new ArgumentException("Invalid command or coordinates are out of bounds.");
-                    }
-                }
-                ShowException();
+                        var (shapeName, x, y, width, height, radius, penColorName, fill) = commandParser.ParseCommand(command, canvasBitmap.Width, canvasBitmap.Height);
 
+                        if (shapeName != null)
+                        {
+                            if (shapeName == "moveto")
+                            {
+                                // Unlock the resource if it was previously locked
+                                if (isResourceLocked)
+                                {
+                                    isResourceLocked = false;
+                                }
+                                else
+                                {
+                                    commandHandler.MoveTo(x, y);
+
+                                    // Lock the resource when encountering moveto
+                                    isResourceLocked = true;
+                                }
+                            }
+                            else if (shapeName == "colour")
+                            {
+                                SetPenColor(Color.FromName(penColorName));
+                            }
+                            else if (shapeName == "fill")
+                            {
+                                fillShapes = fill;
+                            }
+                            else if (shapeName == "reset")
+                            {
+                                commandHandler.ResetCursor();
+                            }
+                            else if (shapeName == "clear")
+                            {
+                                ClearCanvas();
+                            }
+                            else
+                            {
+                                Shape shape = new CreateShape().MakeShape(shapeName);
+
+                                myShapes.Add(shape);
+
+                                shape.Draw(graphics, penColor, commandHandler.CursorPosX, commandHandler.CursorPosY, width, height, radius, fillShapes, angle);
+                            }
+                        }
+                        else
+                        {
+                            throw new ArgumentException("Invalid command or coordinates are out of bounds.");
+                        }
+                    }
+                    ShowException();
+
+                }
             }
         }
-
 
         /// <summary>
         /// Checks if the given command represents a method call.
@@ -405,9 +419,12 @@ namespace ASEProject
         /// <param name="inputCommand">The drawing command to execute.</param>
         public void ExecuteSingleCommand(string inputCommand)
         {
-            //CleanUpCanvas();
-            ExecuteCommand(inputCommand);
-            ShowException();
+            using (Graphics graphics = Graphics.FromImage(canvasBitmap))
+            {
+                //CleanUpCanvas();
+                ExecuteCommand(inputCommand);
+                ShowException();
+            }
         }
 
         /// <summary>
@@ -419,28 +436,28 @@ namespace ASEProject
             ResetVariables();
             CleanUpCanvas();
             string[] commands = inputCommands.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries);
-
-            using (Graphics graphics = Graphics.FromImage(canvasBitmap))
+            lock (canvasBitmap)
             {
-                int totalCommand = commands.Length;
-                int lineNumber = 0;
-                foreach (string command in commands)
+                using (Graphics graphics = Graphics.FromImage(canvasBitmap))
                 {
-                    // Execute the command for each line
-                    ExecuteCommand(command, lineNumber, totalCommand);
-
-                    lineNumber++;
-                }
-
-                if (canvasShape != null)
-                {
-                    lock (canvasLock)
+                    int totalCommand = commands.Length;
+                    int lineNumber = 0;
+                    foreach (string command in commands)
                     {
+                        // Execute the command for each line
+                        ExecuteCommand(command, lineNumber, totalCommand);
+
+                        lineNumber++;
+                    }
+
+                    if (canvasShape != null)
+                    {
+
                         canvasShape.Image = (Image)canvasBitmap.Clone();
                     }
-                }
 
-                ShowException();
+                    ShowException();
+                }
             }
         }
 

@@ -91,63 +91,75 @@ namespace ASEProject
             }
         }
 
-        // Event handler for Execute button
-        private void button3_Click(object sender, EventArgs e)
-        {
-            string userInput = commandBox.Text;
-            string inputCommands1 = programWindow.Text;
-            string inputCommands2 = programWindow1.Text;
+              private  void button3_Click(object sender, EventArgs e)
+              {
+                  string userInput = commandBox.Text;
+                  string inputCommands1 = programWindow.Text;
+                  string inputCommands2 = programWindow1.Text;
 
-            // Execute single command
-            if (!string.IsNullOrEmpty(userInput))
-            {
-                drawHandler.ExecuteSingleCommand(userInput);
-                canvasShape.Image = drawHandler.GetCanvasImage();
-            }
+                  // Execute single command
+                  if (!string.IsNullOrEmpty(userInput))
+                  {
+                      drawHandler.ExecuteSingleCommand(userInput);
+                      canvasShape.Image = drawHandler.GetCanvasImage();
+                  }
 
-            // Execute multiple commands for Program Window 1
-            if (!string.IsNullOrEmpty(inputCommands1))
-            {
-                ExecuteMultilineCommandInThread(inputCommands1, 1);
-            }
-
-            // Execute multiple commands for Program Window 2
-            if (!string.IsNullOrEmpty(inputCommands2))
-            {
-                ExecuteMultilineCommandInThread(inputCommands2, 2);
-            }
-            canvasShape.Image = drawHandler.GetCanvasImage();
-        }
-
-        private void ExecuteMultilineCommandInThread(string commands, int programNumber)
-        {
-            Thread thread;
-            if (programNumber == 1)
-            {
-                thread = thread1;
-            }
-            else
-            {
-                thread = thread2;
-            }
-
-            thread = new Thread(() =>
-            {
-                try
+                // Execute multiple commands for Program Window 1
+                if (!string.IsNullOrEmpty(inputCommands1))
                 {
-                    drawHandler.ExecuteMultilineCommand(commands);
+                        // Execute the commands concurrently
+                        Task.Run(() =>
+                        {
+                            drawHandler.ExecuteMultilineCommand(inputCommands1);
+                            Thread.Sleep(500);
+
+                        });
                 }
-                catch (Exception ex)
-                {
-                    Invoke(new Action(() =>
+
+                  // Execute multiple commands for Program Window 2
+                  if (!string.IsNullOrEmpty(inputCommands2))
+                  {
+                    Task.Run(() =>
                     {
-                        MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }));
-                }
-            });
+                        drawHandler.ExecuteMultilineCommand(inputCommands2);
+                        Thread.Sleep(500);
 
-            thread.Start();
-        }
+                    });
+               }
+
+                  canvasShape.Image = drawHandler.GetCanvasImage();
+              }
+
+
+           private void ExecuteMultilineCommandInThread(string commands, int programNumber)
+                {
+                    Thread thread;
+                    if (programNumber == 1)
+                    {
+                        thread = thread1;
+                    }
+                    else
+                    {
+                        thread = thread2;
+                    }
+
+                    thread = new Thread(() =>
+                    {
+                        try
+                        {
+                            drawHandler.ExecuteMultilineCommand(commands);
+                        }
+                        catch (Exception ex)
+                        {
+                            Invoke(new Action(() =>
+                            {
+                                MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            }));
+                        }
+                    });
+
+                    thread.Start();
+                }
 
         // Event handler for Clear button
         private void clearBtn_Click(object sender, EventArgs e)
